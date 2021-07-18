@@ -1,0 +1,16 @@
+compiler:
+  objs_path:            'spec/spec_objs/'
+  build_path:           'spec/spec_target/'
+  source_path:        'spec/spec_src/'
+includes_folders:       ['spec/spec_src/includes/']
+target_folder:          'spec/spec_target/'
+mcu:                    'MK66FX1M0'
+CC:                     'gcc'
+cc_compiler_options:    ' '
+cpp_compiler_options:   ' '
+CPP:                    'g++'
+options:                ' '
+target:                 'spec-main'
+linker_options:         ' '
+arduino_path:           '/home/al/tools/arduino/'
+tools_path:             'hardware/tools/'

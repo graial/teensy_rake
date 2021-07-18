@@ -1,0 +1,6 @@
+.rake_tasks~
+build/
+.rspec
+.ruby-version
+unity.framework/
+teensy3
