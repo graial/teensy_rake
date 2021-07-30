@@ -29,16 +29,25 @@
  */
 
 #include <Arduino.h>
+#include "TeensyLedDriver.h"
+
+
+// extern "C" void TeensyLedDriver_Create(int pinNumber);
 
 extern "C" int main(void)
 {
-#ifdef USING_MAKEFILE
 
-	pinMode(13, OUTPUT);
+#ifdef USING_MAKEFILE
+    int ledNumber = 13;
+    TeensyLedDriver_Create(ledNumber);
+	   // pinMode(ledNumber, OUTPUT);
+
 	while (1) {
-		digitalWriteFast(13, HIGH);
-		delay(1500);
-		digitalWriteFast(13, LOW);
+		// TeensyLedDriver_TurnOn(ledNumber);
+        digitalWriteFast(ledNumber, HIGH);
+		delay(500);
+		// TeensyLedDriver_TurnOff(13);
+        digitalWriteFast(ledNumber, LOW);
 		delay(1500);
 	}
 #else

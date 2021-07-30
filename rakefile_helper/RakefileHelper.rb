@@ -147,10 +147,7 @@ puts "cpp: #{string}"
 	end
 
 	def get_subfolders(folder)
-		Dir.gloClearing build directory
-Running unit tests
-Running system tests...
-b("#{folder}*/")
+		Dir.glob("#{folder}*/")
 	end
 
 	def get_objs_list

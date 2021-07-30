@@ -64,13 +64,17 @@ def find_source_file(header, paths)
 end
 
 def squash(prefix, items)
+  helper = RakefileHelper.new
+
   result = ''
-  items.each { |item| result += " #{prefix}#{tackit(item)}" }
+  items.each { |item| result += " #{prefix}#{helper.tackit(item)}" }
   result
 end
 
 def build_compiler_fields
-  command = tackit($cfg['compiler']['path'])
+  helper = RakefileHelper.new
+
+  command = helper.tackit($cfg['compiler']['path'])
   defines = if $cfg['compiler']['defines']['items'].nil?
               ''
             else
@@ -96,7 +100,9 @@ def compile(file, _defines = [])
 end
 
 def build_linker_fields
-  command = tackit($cfg['linker']['path'])
+  helper = RakefileHelper.new
+ 
+  command = helper.tackit($cfg['linker']['path'])
   options = if $cfg['linker']['options'].nil?
               ''
             else
@@ -127,7 +133,7 @@ def build_simulator_fields
   command = if $cfg['simulator']['path'].nil?
               ''
             else
-              (tackit($cfg['simulator']['path']) + ' ')
+              (helper.tackit($cfg['simulator']['path']) + ' ')
             end
   options = if $cfg['simulator']['options'].nil?
               ''
