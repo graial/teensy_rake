@@ -27,13 +27,14 @@ helper.configure_clean
 
 task unit: [:prepare_for_tests] do
   puts "Running unit tests".yellow
-  run_tests unit_test_files
+puts helper.unit_test_files.to_s
+  run_tests helper.unit_test_files
 end
 
 task unit_stage_2: [:prepare_for_tests] do
   puts "Running unit tests on arm-none-eabi-gcc".yellow
   configure_toolchain('target_teensy_36.yml')
-  run_tests unit_test_files
+  run_tests helper.unit_test_files
 end
 
 task deploy_teensy: [:prepare_teensy_hex] do

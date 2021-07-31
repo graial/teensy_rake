@@ -1,7 +1,9 @@
 compiler:
   objs_path:            'spec/spec_objs/'
   build_path:           'spec/spec_target/'
-  source_path:        'spec/spec_src/'
+  source_path:          'spec/spec_src/'
+  unit_tests_path:      'spec/spec_test/'
+  mocks_path:           'spec/spec_mocks/'
 includes_folders:       ['spec/spec_src/includes/']
 target_folder:          'spec/spec_target/'
 mcu:                    'MK66FX1M0'

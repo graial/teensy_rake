@@ -29,12 +29,6 @@ def configure_toolchain(config_file = DEFAULT_CONFIG_FILE)
   RakefileHelper.new.configure_clean
 end
 
-def unit_test_files
-  path = $cfg['compiler']['unit_tests_path'] + '**/Test*' + C_EXTENSION
-  path.tr!('\\', '/')
-  FileList.new(path)
-end
-
 def local_include_dirs
   include_dirs_from_config = $cfg['compiler']['includes']['items'].dup
   include_dirs = include_dirs_from_config

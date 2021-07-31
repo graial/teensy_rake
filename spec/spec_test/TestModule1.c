@@ -1,0 +1,1 @@
+// TestModule1.c correctly prefixed, should be recognized by Rakefile

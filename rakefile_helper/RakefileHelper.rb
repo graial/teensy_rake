@@ -9,6 +9,8 @@ class RakefileHelper
 				:objs_folder, 
 				:build_folder, 
 				:source_folder,
+				:unit_tests_folder,
+				:mocks_folder,
 				:target_folder,
 				:sources_list,
 				:usb_addresses,
@@ -35,6 +37,8 @@ class RakefileHelper
 		@SYSTEM = YAML.load(File.read(@system_file))
 		@source_folder = @CONFIG['compiler']['source_path']
 		@build_folder = @CONFIG['compiler']['build_path']
+		@unit_tests_folder = @CONFIG['compiler']['unit_tests_path']
+		@mocks_folder = @CONFIG['compiler']['mocks_path']
 		@target_folder = @CONFIG['target_folder']
 		@arduino_path = @CONFIG['arduino_path']
 		@MCU = @CONFIG['mcu']
@@ -55,6 +59,7 @@ class RakefileHelper
 		@tools_path = arduino_path + @CONFIG['tools_path'] if arduino_path
 
 		@usb_addresses = @SYSTEM['usb_addresses']
+		@C_EXTENSION = '.c'.freeze
 	end
 	
 	def load_helper_config(args)
@@ -237,5 +242,12 @@ puts reboot_command
 	             strings
 	           end
 	  result
+	end
+
+	def unit_test_files
+	  test_path = (@unit_tests_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
+	  mocks_path = (@mocks_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
+	  list = FileList.new(test_path)
+	  list.add(mocks_path)
 	end
 end

@@ -328,13 +328,16 @@ RSpec.describe RakefileHelper do
 	end
 
 	describe "Unity supplied methods" do
-end
-	it "creates a string of arguments from an array " do
-		arr = ["option1", "option2"]
-		expect(helper.tackit(arr)).to eq("\"option1option2\"")		
-	end
-	it "appends a common flag to a series of arguments " do
-		arr = ["option1", "option2"]
-		expect(helper.squash("-flag ", arr)).to eq(" -flag option1 -flag option2")
+		it "creates a string of arguments from an array " do
+			arr = ["option1", "option2"]
+			expect(helper.tackit(arr)).to eq("\"option1option2\"")		
+		end
+		it "appends a common flag to a series of arguments " do
+			arr = ["option1", "option2"]
+			expect(helper.squash("-flag ", arr)).to eq(" -flag option1 -flag option2")
+		end
+		it "identifies test files within the 'test' and 'mocks' folders, prefixed by Test" do
+			expect(helper.unit_test_files).to contain_exactly('spec/spec_test/TestModule1.c', 'spec/spec_mocks/TestModuleSpy.c')
+		end
 	end
 end
