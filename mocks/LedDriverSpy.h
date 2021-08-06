@@ -11,5 +11,7 @@ enum
 
 int LedDriverSpy_GetLastId(void);
 int LedDriverSpy_GetLastState(void);
+void LedDriverSpy_Reset(void);
+
 
 #endif

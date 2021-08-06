@@ -27,6 +27,23 @@ void LedController_Activate(int ledNumber)
 
 void LedController_Deactivate(int ledNumber)
 {
+	LedDriver_Destroy(ledNumber);
 	ledsImage &= ~(getBitLocationFromLedNumber(ledNumber));
 	*ledsAddress = ledsImage;
+}
+
+void LedController_TurnOn(int ledNumber)
+{
+	if (ledsImage == getBitLocationFromLedNumber(ledNumber))
+	{
+		LedDriver_TurnOn(ledNumber);
+	}
+}
+
+void LedController_TurnOff(int ledNumber)
+{
+	if (ledsImage == getBitLocationFromLedNumber(ledNumber))
+	{
+		LedDriver_TurnOff(ledNumber);
+	}
 }

@@ -11,6 +11,7 @@ void setUp(void)
 
 void tearDown(void)
 {
+  LedDriverSpy_Reset();
 }
 
 void test_LedController_is_inactive_upon_creation(void)
@@ -62,11 +63,38 @@ void test_Unactivated_Led_will_return_LED_id_if_activated(void)
   TEST_ASSERT_EQUAL_HEX16(LED_STATE_UNKNOWN, LedDriverSpy_GetLastState());
 }
 
-// void test_Unactivated_Led_will_return_unknown_if_deactivated_and_turned_on(void)
-// {
-//   LedController_Activate(10);
-//   LedController_Deactivate(10);
-//   LedController_TurnOn(10);
-//   TEST_ASSERT_EQUAL_HEX16(LIGHT_ID_UNKNOWN, LedDriverSpy_GetLastId());
-//   TEST_ASSERT_EQUAL_HEX16(LIGHT_STATE_UNKNOWN, LedDriverSpy_GetLastState());
-// }
+void test_Activated_Led_can_be_turned_on(void)
+{
+  LedController_Activate(10);
+  LedController_TurnOn(10);
+  TEST_ASSERT_EQUAL_HEX16(10, LedDriverSpy_GetLastId());
+  TEST_ASSERT_EQUAL_HEX16(LED_ON, LedDriverSpy_GetLastState());
+}
+
+void test_Activated_Led_can_be_turned_off(void)
+{
+  LedController_Activate(10);
+  LedController_TurnOn(10);
+  LedController_TurnOff(10);
+  TEST_ASSERT_EQUAL_HEX16(10, LedDriverSpy_GetLastId());
+  TEST_ASSERT_EQUAL_HEX16(LED_OFF, LedDriverSpy_GetLastState());
+}
+
+void test_Unactivated_Led_will_return_unknown_if_deactivated_and_turned_on(void)
+{
+  LedController_Activate(10);
+  LedController_Deactivate(10);
+  LedController_TurnOn(10);
+  TEST_ASSERT_EQUAL_HEX16(LED_ID_UNKNOWN, LedDriverSpy_GetLastId());
+  TEST_ASSERT_EQUAL_HEX16(LED_STATE_UNKNOWN, LedDriverSpy_GetLastState());
+}
+
+void test_Unactivated_Led_will_return_unknown_if_deactivated_and_turned_off(void)
+{
+  LedController_Activate(10);
+  LedController_TurnOn(10);
+  LedController_Deactivate(10);
+  LedController_TurnOff(10);
+  TEST_ASSERT_EQUAL_HEX16(LED_ID_UNKNOWN, LedDriverSpy_GetLastId());
+  TEST_ASSERT_EQUAL_HEX16(LED_STATE_UNKNOWN, LedDriverSpy_GetLastState());
+}

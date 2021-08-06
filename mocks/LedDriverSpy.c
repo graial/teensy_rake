@@ -3,17 +3,13 @@
 static int lastId;
 static int lastState;
 
-void LedDriver_Destroy(int id)
-{
-}
-
 void LedDriver_Create(int id)
 {
 	lastId = id;
 	lastState = LED_STATE_UNKNOWN;
 }
 
-void LedDriver_Deactivate(int id)
+void LedDriver_Destroy(int id)
 {
 	lastId = LED_STATE_UNKNOWN;
 	lastState = LED_STATE_UNKNOWN;
@@ -39,4 +35,10 @@ int LedDriverSpy_GetLastId(void)
 int LedDriverSpy_GetLastState(void)
 {
 	return lastState;
+}
+
+void LedDriverSpy_Reset(void)
+{
+	lastId = LED_STATE_UNKNOWN;
+	lastState = LED_STATE_UNKNOWN;
 }
