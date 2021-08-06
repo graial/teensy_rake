@@ -36,9 +36,3 @@ int LedDriverSpy_GetLastState(void)
 {
 	return lastState;
 }
-
-void LedDriverSpy_Reset(void)
-{
-	lastId = LED_STATE_UNKNOWN;
-	lastState = LED_STATE_UNKNOWN;
-}

@@ -11,7 +11,6 @@ void setUp(void)
 
 void tearDown(void)
 {
-  LedDriverSpy_Reset();
 }
 
 void test_LedController_is_inactive_upon_creation(void)
