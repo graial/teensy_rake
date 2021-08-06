@@ -248,6 +248,6 @@ puts reboot_command
 	  test_path = (@unit_tests_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  mocks_path = (@mocks_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  list = FileList.new(test_path)
-	  list.add(mocks_path)
+	  list.add(mocks_path).shuffle
 	end
 end

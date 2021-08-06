@@ -3,10 +3,10 @@ compiler:
   # path: gcc
   source_path:     &source_path 'src/'
   # includes_path:     &includes_path 'includes/'
-  # unit_tests_path: &unit_tests_path 'test/'
+  unit_tests_path: &unit_tests_path 'test/'
   build_path:      &build_path 'build/'
   objs_path:      &objs_path 'build/objs/'
-  # mocks_path:      &mocks_path 'mocks/'
+  mocks_path:      &mocks_path 'mocks/'
 
 target_folder: 'teensy3/'
 includes_folders: ['teensy3/', 'includes/']

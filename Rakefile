@@ -27,7 +27,7 @@ helper.configure_clean
 
 task unit: [:prepare_for_tests] do
   puts "Running unit tests".yellow
-puts helper.unit_test_files.to_s
+puts helper.unit_test_files.to_s.yellow
   run_tests helper.unit_test_files
 end
 
