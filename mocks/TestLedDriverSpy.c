@@ -1,14 +1,16 @@
 #include "unity.h"
 #include "LedDriverSpy.h"
 
+LedDriver driver; 
+
 void setUp(void)
 {
-  LedDriver_Create(4);
+  driver = LedDriver_Create(4);
 }
 
 void tearDown(void)
 {
-  LedDriver_Destroy(4);
+  LedDriver_Destroy(driver);
 }
 
 void test_LedDriverSpy_unknown_on_create(void)
@@ -19,15 +21,15 @@ void test_LedDriverSpy_unknown_on_create(void)
 
 void test_LedDriverSpy_turnOn(void)
 {
-  LedDriver_TurnOn(4);
+  LedDriver_TurnOn(driver);
   TEST_ASSERT_EQUAL_HEX16(4, LedDriverSpy_GetLastId());
   TEST_ASSERT_EQUAL_HEX16(LED_ON, LedDriverSpy_GetLastState());
 }
 
 void test_LedDriverSpy_turnOff(void)
 {
-  LedDriver_TurnOn(4);
-  LedDriver_TurnOff(4);
+  LedDriver_TurnOn(driver);
+  LedDriver_TurnOff(driver);
   TEST_ASSERT_EQUAL_HEX16(4, LedDriverSpy_GetLastId());
   TEST_ASSERT_EQUAL_HEX16(LED_OFF, LedDriverSpy_GetLastState());
 }

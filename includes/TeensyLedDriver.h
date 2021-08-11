@@ -3,8 +3,18 @@
 
 #include <stdint.h>
 
-void TeensyLedDriver_Create(int pinNumber);
-void TeensyLedDriver_TurnOn(int pinNumber);
-void TeensyLedDriver_TurnOff(int pinNumber);
+#include "LedDriver.h"
+
+typedef struct TeensyLedDriverStruct * TeensyLedDriver;
+
+typedef struct TeensyLedDriverStruct
+{
+	LedDriverStruct base;
+} TeensyLedDriverStruct;
+
+TeensyLedDriver TeensyLedDriver_Create(int pinNumber);
+void TeensyLedDriver_Destroy(TeensyLedDriver self);
+void TeensyLedDriver_TurnOn(TeensyLedDriver self);
+void TeensyLedDriver_TurnOff(TeensyLedDriver self);
 
 #endif

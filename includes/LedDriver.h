@@ -10,9 +10,9 @@ typedef struct LedDriverStruct
 	int id;
 } LedDriverStruct;
 
-void LedDriver_Create(int pinNumber);
-void LedDriver_Destroy(int pinNumber);
-void LedDriver_TurnOn(int pinNumber);
-void LedDriver_TurnOff(int pinNumber);
+LedDriver LedDriver_Create(int pinNumber);
+void LedDriver_Destroy(LedDriver self);
+void LedDriver_TurnOn(LedDriver self);
+void LedDriver_TurnOff(LedDriver self);
 
 #endif

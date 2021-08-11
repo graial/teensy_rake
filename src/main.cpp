@@ -1,24 +1,21 @@
 #include <Arduino.h>
 
-extern "C" {
-#include "LedController.h"
-}
-
 extern "C" int main(void)
 {
+	#include "LedController.h"
+    
     uint16_t activeLeds;
     LedController_Create(&activeLeds);
     int boardLed = 13;
     LedController_Activate(boardLed);
-    // pinMode(ledNumber, OUTPUT);
 
 	while (1) {
-		// TeensyLedDriver_TurnOn(ledNumber);
-        digitalWriteFast(boardLed, HIGH);
+		LedController_TurnOn(boardLed);
+        // digitalWriteFast(boardLed, HIGH);
 		delay(500);
-		// TeensyLedDriver_TurnOff(13);
-        digitalWriteFast(boardLed, LOW);
-		delay(500);
+		LedController_TurnOff(boardLed);
+        // digitalWriteFast(boardLed, LOW);
+		delay(1500);
 	}
 }
 

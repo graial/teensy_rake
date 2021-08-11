@@ -1,25 +1,25 @@
 #include "Arduino.h"
-#include "LedDriver.h"
 #include "TeensyLedDriver.h"
 
-typedef struct TeensyLedDriverStruct * TeensyLedDriver;
-
-typedef struct TeensyLedDriverStruct
+LedDriver TeensyLedDriver_Create(LedDriver self)
 {
-	LedDriverStruct base;
-} TeensyLedDriverStruct;
-
-void TeensyLedDriver_Create(int ledNumber)
-{
-	pinMode(ledNumber, OUTPUT);
+	// TeensyLedDriver self = calloc(1, sizeof(TeensyLedDriverStruct));
+	// self->base.id = ledNumber
+	pinMode(self->base.id, OUTPUT);
+	// return (LedDriver)self;
 }
 
-void TeensyLedDriver_TurnOn(int ledNumber)
+void TeensyLedDriver_Destroy(LedDriver self)
 {
-	digitalWriteFast(ledNumber, HIGH);
+	// free(self->base.id)
 }
 
-void TeensyLedDriver_TurnOff(int ledNumber)
+void TeensyLedDriver_TurnOn(LedDriver self)
 {
-	digitalWriteFast(ledNumber, LOW);
+	digitalWriteFast(self->base.id, HIGH);
+}
+
+void TeensyLedDriver_TurnOff(LedDriver self)
+{
+	digitalWriteFast(self->base.id, LOW);
 }
