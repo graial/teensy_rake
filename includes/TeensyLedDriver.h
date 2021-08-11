@@ -3,13 +3,11 @@
 
 #include <stdint.h>
 
-#include "LedDriver.h"
-
 typedef struct TeensyLedDriverStruct * TeensyLedDriver;
 
 typedef struct TeensyLedDriverStruct
 {
-	LedDriverStruct base;
+	int id;
 } TeensyLedDriverStruct;
 
 TeensyLedDriver TeensyLedDriver_Create(int pinNumber);

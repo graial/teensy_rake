@@ -3,8 +3,9 @@
 extern "C" int main(void)
 {
 	#include "LedController.h"
-    
-    uint16_t activeLeds;
+
+    uint32_t activeLeds;
+
     LedController_Create(&activeLeds);
     int boardLed = 13;
     LedController_Activate(boardLed);
@@ -15,7 +16,7 @@ extern "C" int main(void)
 		delay(500);
 		LedController_TurnOff(boardLed);
         // digitalWriteFast(boardLed, LOW);
-		delay(1500);
+		delay(500);
 	}
 }
 
