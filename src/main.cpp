@@ -12,10 +12,8 @@ extern "C" int main(void)
 
 	while (1) {
 		LedController_TurnOn(boardLed);
-        // digitalWriteFast(boardLed, HIGH);
 		delay(500);
 		LedController_TurnOff(boardLed);
-        // digitalWriteFast(boardLed, LOW);
 		delay(500);
 	}
 }
