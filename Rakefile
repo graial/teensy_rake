@@ -33,7 +33,7 @@ end
 
 task unit_stage_2: [:prepare_for_tests] do
   puts "Running unit tests on arm-none-eabi-gcc".yellow
-  configure_toolchain('target_teensy_36.yml')
+  configure_toolchain('project.yml')
   run_tests helper.unit_test_files
 end
 

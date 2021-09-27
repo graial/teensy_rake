@@ -13,9 +13,9 @@ class RakefileHelper
 				:mocks_folder,
 				:target_folder,
 				:sources_list,
+				:includes,
 				:usb_addresses,
 				:objs_list,
-				:includes,
 				:linker_path,
 				:cc_compiler_options,
 				:cpp_compiler_options,
@@ -44,12 +44,13 @@ class RakefileHelper
 		@MCU = @CONFIG['mcu']
 		@linker_path = @target_folder + @MCU.downcase + '.ld' if (@target_folder && @MCU)
 
-		@sources_list = get_sources_list
+		@sources_list ||= get_sources_list
+		@defines ||= get_defines
+		@includes ||= get_includes
+
 		@objs_folder = @CONFIG['compiler']['objs_path']
 		@objs_list = get_objs_list
-		includes_folders = @CONFIG['includes_folders']
 		target_folder = @CONFIG['target_folder'] if target_folder
-		@includes = generate_includes(includes_folders) if includes_folders
 		@cc_compiler_options = @CONFIG['cc_compiler_options']
 		@cpp_compiler_options = @CONFIG['cpp_compiler_options']
 		@linker_options = @CONFIG['linker_options']
@@ -110,11 +111,11 @@ puts shell_command
 
 		case source.extname
 		when '.c'
-			string = " #{includes} -c -o #{object} #{source}"
+			string = "#{@defines} #{@includes} -c -o #{object} #{source}"
 puts "cc: #{string}"
 			output = gcc(string)
 		when '.cpp'
-			string = " #{includes} -c -o #{object} #{source} "
+			string = "#{@defines} #{@includes} -c -o #{object} #{source} "
 puts "cpp: #{string}"
 			output = gpp(string)
 		else
@@ -140,15 +141,25 @@ puts "cpp: #{string}"
 		output = link(string)
 	end
 
-	def generate_includes(array)
-		string = ""
-		array.each do |include|
-			string = string + ' -I' + include 
-			get_subfolders(include).each do |sub|
-				string = string + ' -I' + sub 
+	def get_includes
+		if @CONFIG['includes']
+			includes_list = @CONFIG['includes']['items']
+			includes_prefix = @CONFIG['includes']['prefix']
+			includes_list.each do |include|
+				get_subfolders(include).each do |sub|
+					includes_list.push(sub)
+				end
 			end
+			squash(includes_prefix, includes_list)
 		end
-		string
+	end
+
+	def get_defines
+		if @CONFIG['defines']
+			defines_list = @CONFIG['defines']['items'] 
+			defines_prefix = @CONFIG['defines']['prefix']
+			squash(defines_prefix, defines_list)
+		end
 	end
 
 	def get_subfolders(folder)
@@ -249,5 +260,14 @@ puts reboot_command
 	  mocks_path = (@mocks_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  list = FileList.new(test_path)
 	  list.add(mocks_path).shuffle
+	end
+
+	def run_tests
+puts "Running system tests..."
+puts "defines" + @defines
+
+		unit_test_files.each do |test_file|
+			compile_and_assemble(test_file)
+		end
 	end
 end

@@ -32,6 +32,7 @@ compiler:
       - UNITY_SUPPORT_TEST_CASES
       - __MK66FX1M0__ 
       - F_CPU=48000000
+      - TEST
   object_files:
     prefix: '-o'
     extension: '.o'

@@ -9,9 +9,24 @@ compiler:
   mocks_path:      &mocks_path 'mocks/'
 
 target_folder: 'teensy3/'
-includes_folders: ['teensy3/', 'includes/']
+includes: 
+  prefix: '-I'
+  items:
+    - teensy3/
+    - includes/
+defines: 
+  prefix: '-D'
+  items:
+    - F_CPU=48000000 
+    - USB_SERIAL 
+    - LAYOUT_US_ENGLISH 
+    - __MK66FX1M0__ 
+    - F_CPU=48000000 
+    - USING_MAKEFILE 
+    - ARDUINO=10805 
+    - TEENSYDUINO=144
 MCU: 'MK66FX1M0'
-cc_compiler_options: ' -Wall -g -Os -mcpu=cortex-m4 -mthumb -MMD -DF_CPU=48000000 -DUSB_SERIAL -DLAYOUT_US_ENGLISH -D__MK66FX1M0__ -DF_CPU=48000000 -DUSING_MAKEFILE -DARDUINO=10805 -DTEENSYDUINO=144'
+cc_compiler_options: ' -Wall -g -Os -mcpu=cortex-m4 -mthumb -MMD'
 cpp_compiler_options: ' -std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti '
 CC: 'arm-none-eabi-gcc'
 CPP: 'arm-none-eabi-g++'

@@ -83,7 +83,9 @@ RSpec.describe RakefileHelper do
 			yaml_path = 'spec/dummy.yml'
 			yaml = File.open(yaml_path, 'w') { |f|
 				f << "compiler:\n"
-				f << "  objs_path: 'dummy_yaml'"
+				f << "  objs_path: 'dummy_yaml'\n"
+				f << "defines:\n"
+				f << "includes:\n"
 			}
 			test_helper = RakefileHelper.new(config: yaml_path)
 
@@ -106,13 +108,13 @@ RSpec.describe RakefileHelper do
 	end
 	describe "directory & file lists" do
 		it 'finds includes with subdirectories of the target directory' do
-			expect(helper.includes).to eq(" -Ispec/spec_src/includes/ -Ispec/spec_src/includes/sub_includes/")
+			expect(helper.includes).to eq(" -Ispec/spec_src/includes/ -Ispec/spec_mocks -Iunity.framework/src/ -Ispec/spec_src/includes/sub_includes/ -Ispec/spec_mocks/")
 		end
 
 		it 'adds an include directory' do
 			delete_filetype_if_exists(obj_folder, 'o')
 			
-			includes = helper.includes
+			includes = helper.get_includes
 
 			target = 'main_with_other'
 			source_filepath = add_src_wrappers(source_folder, target)
@@ -120,12 +122,6 @@ RSpec.describe RakefileHelper do
 			helper.compile_and_assemble(source_filepath)
 
 			expect(check_for_file(obj_filepath)).to eq(true)
-		end
-		it 'generates includes from an array of strings' do
-			include1 = 'inc1'
-			include2 = 'inc2'
-			include_array = [include1, include2]
-			expect(helper.generate_includes(include_array)).to eq(" -Iinc1 -Iinc2")
 		end
 		it 'knows its sources list' do
 			source1 = source_folder + 'main.c'
@@ -339,5 +335,27 @@ RSpec.describe RakefileHelper do
 		it "identifies test files within the 'test' and 'mocks' folders, prefixed by Test" do
 			expect(helper.unit_test_files).to contain_exactly('spec/spec_test/TestModule1.c', 'spec/spec_mocks/TestModuleSpy.c')
 		end
+	end
+
+	describe "Getting defines from config" do
+		it "pulls list of defines from the yaml" do 
+			expect(helper.get_defines).to eq(' -DSAMPLE_DEFINE -DOTHER_SAMPLE_DEFINE -DTEST')
+		end
+	end
+
+	describe "Building and running tests" do
+		it "runs tests" do
+			expect{ helper.run_tests }.to output(/Running system tests.../).to_stdout 
+		end
+		it "adds a -DTEST to the gcc call" do 
+			expect{ helper.run_tests }.to output(/-DTEST/).to_stdout 
+		end
+		it "gets the list of test files" do
+			expect{ helper.run_tests }.to (
+				output(/spec_test\/TestModule1.c/).to_stdout &&
+				output(/spec_mocks\/TestModuleSpy.c/).to_stdout)
+						# expect{ helper.run_tests }.to output(/test\/TestLedController.c:16:test_LedController_is_inactive_upon_creation:PASS/).to_stdout 
+		end
+
 	end
 end
