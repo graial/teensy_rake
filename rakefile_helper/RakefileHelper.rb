@@ -3,6 +3,8 @@ require 'fileutils'
 require 'pathname'
 require 'rake/clean'
 require 'colorize'
+require_relative '../unity.framework/auto/generate_test_runner'
+
 
 class RakefileHelper
 	attr_reader :config_file, 
@@ -23,7 +25,8 @@ class RakefileHelper
 				:elf_path,
 				:hex_path,
 				:tools_path,
-				:arduino_path				
+				:arduino_path,
+				:unity_source				
 
 	def initialize(*args)
 			@config_file = 'project.yml' 
@@ -39,26 +42,27 @@ class RakefileHelper
 		@build_folder = @CONFIG['compiler']['build_path']
 		@unit_tests_folder = @CONFIG['compiler']['unit_tests_path']
 		@mocks_folder = @CONFIG['compiler']['mocks_path']
-		@target_folder = @CONFIG['target_folder']
+		@target_folder = @CONFIG['compiler']['target_path']
 		@arduino_path = @CONFIG['arduino_path']
 		@MCU = @CONFIG['mcu']
 		@linker_path = @target_folder + @MCU.downcase + '.ld' if (@target_folder && @MCU)
 
 		@sources_list ||= get_sources_list
-		@defines ||= get_defines
-		@includes ||= get_includes
+		@defines ||= get_defines if @CONFIG['defines']
+		@includes ||= get_includes if @CONFIG['includes']
+		@cc_compiler_options ||= get_compiler_options('CC') if @CONFIG['cc_compiler_options']
+		@linker_options ||= get_compiler_options('linker')	if @CONFIG['linker']
 
 		@objs_folder = @CONFIG['compiler']['objs_path']
 		@objs_list = get_objs_list
-		target_folder = @CONFIG['target_folder'] if target_folder
-		@cc_compiler_options = @CONFIG['cc_compiler_options']
 		@cpp_compiler_options = @CONFIG['cpp_compiler_options']
-		@linker_options = @CONFIG['linker_options']
 		
 		@elf_path = build_folder + @CONFIG['target'] + '.elf' if elf_path
 		@hex_path = build_folder + @CONFIG['target'] + '.hex' if hex_path
 		@tools_path = arduino_path + @CONFIG['tools_path'] if arduino_path
 
+		@unity_source = @CONFIG['unity_source']
+		
 		@usb_addresses = @SYSTEM['usb_addresses']
 		@C_EXTENSION = '.c'.freeze
 	end
@@ -112,11 +116,11 @@ puts shell_command
 		case source.extname
 		when '.c'
 			string = "#{@defines} #{@includes} -c -o #{object} #{source}"
-puts "cc: #{string}"
+# puts "cc: #{string}"
 			output = gcc(string)
 		when '.cpp'
 			string = "#{@defines} #{@includes} -c -o #{object} #{source} "
-puts "cpp: #{string}"
+# puts "cpp: #{string}"
 			output = gpp(string)
 		else
 			raise "RakefileHelper error: #{target} is an invalid sourcefile"
@@ -126,7 +130,7 @@ puts "cpp: #{string}"
 
 	def link_obj(object_list, binary)
 		binary_path =  binary
-# puts object_list
+
 		string = " -o #{binary_path} "
 		if object_list.is_a?(Array)
 			object_list.each do |object|
@@ -137,8 +141,17 @@ puts "cpp: #{string}"
 			puts "linker: " + linker_path
 			string += object_list + @linker_path
 		end
-
+puts "string: " + string
 		output = link(string)
+	end
+
+	def get_compiler_options(compiler)
+		if compiler == 'CC' 
+			options_list = @CONFIG['cc_compiler_options']
+		elsif compiler == 'linker'
+			options_list = @CONFIG['linker']['options']
+		end
+		squash('-', options_list)
 	end
 
 	def get_includes
@@ -259,15 +272,84 @@ puts reboot_command
 	  test_path = (@unit_tests_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  mocks_path = (@mocks_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  list = FileList.new(test_path)
-	  list.add(mocks_path).shuffle
+	  list.add(mocks_path)
 	end
 
 	def run_tests
 puts "Running system tests..."
-puts "defines" + @defines
 
 		unit_test_files.each do |test_file|
 			compile_and_assemble(test_file)
+			test_gen = create_runner_generator(test_file)
+			runner_name = generate_runner_name(test_file)
+
+			compile_and_assemble(runner_name)
+			objs = get_test_objs(test_file)
+
+			link_obj(objs, runner_name)
 		end
+	end
+
+	def generate_runner_name(filename)
+		basename = File.basename(filename, '.c')
+		runner_name = basename + '_Runner.c'
+		runner_name = @objs_folder + runner_name
+	end
+
+	def create_runner_generator(test)
+		test_gen = UnityTestRunnerGenerator.new(@CONFIG)
+		test_gen.run(test, objs_folder + File.basename(test).sub('.c', '_Runner.c'))
+	end
+
+	def extract_headers(filename)
+		includes = []
+  		lines = File.readlines(filename)
+  		lines.each do |line|
+    		m = line.match(/^\s*#include\s+\"\s*(.+\.[hH])\s*\"/)
+    		includes << (objs_folder + m[1]) unless m.nil?
+  		end
+  		includes
+	end
+
+	def compile_test_files(filename)
+			compile_and_assemble(filename)
+			runner_name = filename.sub(unit_tests_folder, objs_folder).sub('.c', '_Runner.c')
+			compile_and_assemble(runner_name)
+	end
+
+	def get_test_objs(filename)
+		objs = [
+			objs_folder + File.basename(filename.sub(".c", ".o")),
+			objs_folder + File.basename(filename.sub(".c", "_Runner.o"))
+		]
+		extract_headers(filename).each do |include|
+			source = check_for_source(include)
+			
+			if source
+				compile_and_assemble(source)
+				objs.push(include.sub(unit_tests_folder,objs_folder).sub(".h", ".o")) 
+			end
+		end
+		objs
+	end
+
+	def check_for_source(header)
+		header_name = File.basename(header)
+		source_name = header_name.sub('.h', '.c')
+
+		if File.exist?(source_folder + source_name) 
+			return source_folder + source_name
+		elsif File.exist?(unity_source + source_name) 
+			return unity_source + source_name
+		elsif File.exist?(mocks_folder + source_name) 
+			return mocks_folder + source_name
+		else
+			get_subfolders(source_folder).each do |subfolder|
+				if File.exist?(subfolder + source_name) 
+					return subfolder + source_name
+				end
+			end
+		end
+		false
 	end
 end

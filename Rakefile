@@ -15,25 +15,31 @@ task default: [:unit]
 
 task :prepare_for_tests  do
 	puts "Clearing build directory".yellow
+
 	TEMP_DIRS
+  
+  DEFAULT_CONFIG_FILE = 'target_gcc_32.yml'.freeze
+  helper = RakefileHelper.new(config: DEFAULT_CONFIG_FILE)
+
+  objs_list = helper.objs_list
+  sources_list = helper.sources_list
+
+  helper.configure_clean
 end
 
 # Load default configuration, for now
-DEFAULT_CONFIG_FILE = 'target_gcc_32.yml'.freeze
-configure_toolchain(DEFAULT_CONFIG_FILE)
 
-helper.configure_clean
 
 
 task unit: [:prepare_for_tests] do
   puts "Running unit tests".yellow
 puts helper.unit_test_files.to_s.yellow
-  run_tests helper.unit_test_files
+  # run_tests helper.unit_test_files
+  helper.run_tests
 end
 
 task unit_stage_2: [:prepare_for_tests] do
   puts "Running unit tests on arm-none-eabi-gcc".yellow
-  configure_toolchain('project.yml')
   run_tests helper.unit_test_files
 end
 

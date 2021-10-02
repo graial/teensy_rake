@@ -4,3 +4,5 @@ build/
 .ruby-version
 unity.framework/
 teensy3
+spec/spec_objs/
+spec/spec_build/

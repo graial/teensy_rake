@@ -15,7 +15,7 @@ TEMP_DIRS = [
 
 TEMP_DIRS.each do |dir|
   directory(dir)
-  CLOBBER.include(dir + '*.elf', dir + '*.hex')
+  CLOBBER.include(dir + '*.elf', dir + '*.hex', dir + '*.testfail', dir + '*.testpass', dir + '*/*Runner.c')
 end
 
 def load_configuration(config_file)
@@ -30,7 +30,7 @@ def configure_toolchain(config_file = DEFAULT_CONFIG_FILE)
 end
 
 def local_include_dirs
-  include_dirs_from_config = $cfg['compiler']['includes']['items'].dup
+  include_dirs_from_config = $cfg['includes']['items'].dup
   include_dirs = include_dirs_from_config
   include_dirs_from_config.each do |dir|
     Dir.glob(dir + "*/").each { |sub_dir| include_dirs.push(sub_dir) }
@@ -68,17 +68,17 @@ end
 def build_compiler_fields
   helper = RakefileHelper.new
 
-  command = helper.tackit($cfg['compiler']['path'])
-  defines = if $cfg['compiler']['defines']['items'].nil?
+  command = helper.tackit($cfg['CC'])
+  defines = if $cfg['defines']['items'].nil?
               ''
             else
-              squash($cfg['compiler']['defines']['prefix'], $cfg['compiler']['defines']['items'])
+              squash($cfg['defines']['prefix'], $cfg['defines']['items'])
             end
-  options = squash('', $cfg['compiler']['options'])
+  options = squash('-', $cfg['cc_compiler_options'])
   
   include_dirs = local_include_dirs
 
-  includes = squash($cfg['compiler']['includes']['prefix'], include_dirs)
+  includes = squash($cfg['includes']['prefix'], include_dirs)
   includes = includes.gsub(/\\ /, ' ').gsub(/\\\"/, '"').gsub(/\\$/, '') # Remove trailing slashes (for IAR)
 
   { command: command, defines: defines, options: options, includes: includes }
@@ -96,11 +96,11 @@ end
 def build_linker_fields
   helper = RakefileHelper.new
  
-  command = helper.tackit($cfg['linker']['path'])
+  command = helper.tackit($cfg['CC'])
   options = if $cfg['linker']['options'].nil?
               ''
             else
-              squash('', $cfg['linker']['options'])
+              squash('-', $cfg['linker']['options'])
             end
   includes = if $cfg['linker']['includes'].nil? || $cfg['linker']['includes']['items'].nil?
                ''
@@ -169,11 +169,12 @@ end
 def run_tests(test_files)
   report 'Running system tests...'
 
+  $cfg_file = 'target_gcc_32.yml'
   # Tack on TEST define for compiling unit tests
   load_configuration($cfg_file)
   test_defines = ['TEST']
-  $cfg['compiler']['defines']['items'] = [] if $cfg['compiler']['defines']['items'].nil?
-  $cfg['compiler']['defines']['items'] << 'TEST'
+  $cfg['defines']['items'] = [] if $cfg['defines']['items'].nil?
+  $cfg['defines']['items'] << 'TEST'
 
   include_dirs = local_include_dirs
 
@@ -193,11 +194,12 @@ def run_tests(test_files)
     runner_name = test_base + '_Runner.c'
     if $cfg['compiler']['runner_path'].nil?
       runner_path = $cfg['compiler']['build_path'] + runner_name
-      test_gen = UnityTestRunnerGenerator.new($cfg_file)
-      test_gen.run(test, runner_path)
     else
       runner_path = $cfg['compiler']['runner_path'] + runner_name
     end
+
+    test_gen = UnityTestRunnerGenerator.new($cfg_file)
+    test_gen.run(test, runner_path)
 
     obj_list << compile(runner_path, test_defines)
 

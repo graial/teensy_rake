@@ -8,7 +8,9 @@ RSpec.describe RakefileHelper do
 	let(:helper) { RakefileHelper.new({mode: 'test'}) }
 	let(:obj_folder) { helper.objs_folder }
 	let(:target_folder) { helper.target_folder }
+	let(:build_folder) { helper.build_folder }
 	let(:source_folder) { helper.source_folder }
+	let(:unit_tests_folder) { helper.unit_tests_folder }
 
 	describe "shell commands and clean" do
 		it 'calls gcc' do
@@ -20,12 +22,8 @@ RSpec.describe RakefileHelper do
 		end
 
 		it "prepares folders for clean" do
-			obj1 = obj_folder + 'example.o'
-			create_file(obj1) unless check_for_filetype(obj_folder, 'o')
-
 			expect(helper.configure_clean).to include(
 				"spec/spec_objs/app.exe", 
-				"spec/spec_objs/main.d", 
 				"spec/spec_objs/main.o", 
 				"spec/spec_objs/module.o"
 			)
@@ -84,8 +82,6 @@ RSpec.describe RakefileHelper do
 			yaml = File.open(yaml_path, 'w') { |f|
 				f << "compiler:\n"
 				f << "  objs_path: 'dummy_yaml'\n"
-				f << "defines:\n"
-				f << "includes:\n"
 			}
 			test_helper = RakefileHelper.new(config: yaml_path)
 
@@ -108,7 +104,8 @@ RSpec.describe RakefileHelper do
 	end
 	describe "directory & file lists" do
 		it 'finds includes with subdirectories of the target directory' do
-			expect(helper.includes).to eq(" -Ispec/spec_src/includes/ -Ispec/spec_mocks -Iunity.framework/src/ -Ispec/spec_src/includes/sub_includes/ -Ispec/spec_mocks/")
+			expect(helper.includes).to match(/ -Ispec\/spec_src\/includes\//)
+			expect(helper.includes).to match(/ -Ispec\/spec_src\/includes\/sub_includes\//)
 		end
 
 		it 'adds an include directory' do
@@ -131,7 +128,7 @@ RSpec.describe RakefileHelper do
 		end
 
 		it 'knows its objs list' do
-			allow(helper).to receive(:sources_list).and_return(
+			allow(helper).to receive(:get_sources_list).and_return(
 				[
 					source_folder + 'main.c',
 					source_folder + 'main_with_other.c',
@@ -147,7 +144,7 @@ RSpec.describe RakefileHelper do
 			obj4 = obj_folder + 'mainPlus.o'
 			obj5 = obj_folder + 'module_in_sub.o'
 
-			expect(helper.objs_list).to contain_exactly(obj1, obj2, obj3, obj4, obj5)
+			expect(helper.objs_list).to include(obj1, obj2, obj3, obj4, obj5)
 		end
 		
 		it 'return the target .o file for a given source' do
@@ -286,15 +283,15 @@ RSpec.describe RakefileHelper do
 		end
 	
 		it 'knows the linker script for the build target' do
-			expected_string = spec_yaml["target_folder"] + spec_yaml["mcu"].downcase + '.ld'
+			expected_string = spec_yaml["compiler"]["target_path"] + spec_yaml["mcu"].downcase + '.ld'
 			expect(helper.linker_path).to eq(expected_string)
 		end
 	end
 
 	it "queries the size of the .elf generated" do
-		allow(helper).to receive(:elf_path).and_return(target_folder + 'main.elf')
+		allow(helper).to receive(:elf_path).and_return(build_folder + 'main.elf')
 
-		expect(helper.get_elf_size).to eq("   text\t   data\t    bss\t    dec\t    hex\tfilename\n  47484\t      0\t   2776\t  50260\t   c454\tspec/spec_target/main.elf\n")
+		expect(helper.get_elf_size).to eq("   text\t   data\t    bss\t    dec\t    hex\tfilename\n  47484\t      0\t   2776\t  50260\t   c454\tspec/spec_build/main.elf\n")
 	end
 
 	it "uploads a hex to the teensy", :teensy do
@@ -344,6 +341,14 @@ RSpec.describe RakefileHelper do
 	end
 
 	describe "Building and running tests" do
+		let(:compile_unity) { helper.compile_and_assemble(helper.unity_source + 'unity.c') }
+
+		it "compiles unity" do
+			delete_file_if_exists(obj_folder + 'unity.o')
+			compile_unity
+			expect(check_for_file(obj_folder + 'unity.o')).to be true
+		end
+
 		it "runs tests" do
 			expect{ helper.run_tests }.to output(/Running system tests.../).to_stdout 
 		end
@@ -353,9 +358,61 @@ RSpec.describe RakefileHelper do
 		it "gets the list of test files" do
 			expect{ helper.run_tests }.to (
 				output(/spec_test\/TestModule1.c/).to_stdout &&
-				output(/spec_mocks\/TestModuleSpy.c/).to_stdout)
-						# expect{ helper.run_tests }.to output(/test\/TestLedController.c:16:test_LedController_is_inactive_upon_creation:PASS/).to_stdout 
+				output(/spec_mocks\/TestModuleSpy.c/).to_stdout
+			)
+		end
+		it "rename a test runner and locates it in the build folder" do
+			test_file = 'spec/spec_mocks/TestRandom.c'
+			expect(helper.generate_runner_name(test_file)).to eq('spec/spec_objs/TestRandom_Runner.c')
+		end
+		it "creates a UnityTestRunnerGenerator object" do
+			target_file = unit_tests_folder + 'TestModule1.c'
+			delete_file_if_exists(obj_folder + 'TestModule1_Runner.c')
+
+			generator = helper.create_runner_generator(target_file)
+
+			expect(check_for_file(obj_folder + 'TestModule1_Runner.c')).to be true
 		end
 
+		it "extracts includes from a target file" do
+			target_file = 'spec/spec_src/main_with_other.c'
+
+			expect(helper.extract_headers(target_file)).to contain_exactly(
+				"spec/spec_objs/module.h", 
+				"spec/spec_objs/other_module.h"
+			)
+		end
+
+		it "compiles the test objs" do 
+			target_file = unit_tests_folder + 'TestModule1.c'
+			delete_file_if_exists target_file.sub(unit_tests_folder, obj_folder).sub('.c', '.o')
+			delete_file_if_exists target_file.sub(unit_tests_folder, obj_folder).sub('.c', '_Runner.c')
+			delete_file_if_exists target_file.sub(unit_tests_folder, obj_folder).sub('.c', '_Runner.o')
+			
+			helper.create_runner_generator(target_file)
+			# helper.compile_test_files(target_file)
+
+			# expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('.c', '.o'))).to be true
+			# expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('_Runner.c', '._Runner.o'))).to be true
+		end
+
+		it "creates a list of test objs from a target Test file" do
+			target_file = 'spec/spec_test/TestModule1.c'
+
+			expect(helper.get_test_objs(target_file)).to contain_exactly(
+				"spec/spec_objs/unity.o",
+				"spec/spec_objs/Module1.o", 
+				"spec/spec_objs/TestModule1.o", 
+				"spec/spec_objs/TestModule1_Runner.o" 
+			)
+		end
+
+		it "searches the sources folder for a given header and returns it if found" do
+			header_with_source = source_folder + 'includes/Module1.h'
+			header_without_source = source_folder + 'includes/other_module.h'
+
+			expect(helper.check_for_source(header_with_source)).to eq(source_folder + 'Module1.c')
+			expect(helper.check_for_source(header_without_source)).to be false
+		end
 	end
 end

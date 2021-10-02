@@ -1,10 +1,12 @@
+unity_root:  &unity_root 'unity.framework'
 unity_source: &unity_source 'unity.framework/src/'
 compiler:
   objs_path:            'spec/spec_objs/'
-  build_path:           'spec/spec_target/'
+  build_path:           'spec/spec_build/'
   source_path:          'spec/spec_src/'
   unit_tests_path:      'spec/spec_test/'
   mocks_path:           'spec/spec_mocks/'
+  target_path:          'spec/spec_target/'
 
 includes:
   prefix: '-I'
@@ -12,11 +14,12 @@ includes:
     - 'spec/spec_src/includes/'
     - 'spec/spec_mocks'
     - *unity_source
+    - *unity_root
 
-target_folder:          'spec/spec_target/'
 mcu:                    'MK66FX1M0'
 CC:                     'gcc'
-cc_compiler_options:    ' '
+cc_compiler_options:
+  - c
 cpp_compiler_options:   ' '
 CPP:                    'g++'
 options:                ' '
@@ -27,6 +30,8 @@ defines:
     - OTHER_SAMPLE_DEFINE
     - TEST
 target:                 'spec-main'
-linker_options:         ' '
+linker:
+  options: 
+    - Os 
 arduino_path:           '/home/al/tools/arduino/'
 tools_path:             'hardware/tools/'

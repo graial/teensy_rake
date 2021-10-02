@@ -1,14 +1,13 @@
 # target: "main"
+
 compiler:
   # path: gcc
   source_path:     &source_path 'src/'
-  # includes_path:     &includes_path 'includes/'
   unit_tests_path: &unit_tests_path 'test/'
   build_path:      &build_path 'build/'
   objs_path:      &objs_path 'build/objs/'
   mocks_path:      &mocks_path 'mocks/'
-
-target_folder: 'teensy3/'
+  target_path: 'teensy3/'
 includes: 
   prefix: '-I'
   items:
@@ -26,11 +25,23 @@ defines:
     - ARDUINO=10805 
     - TEENSYDUINO=144
 MCU: 'MK66FX1M0'
-cc_compiler_options: ' -Wall -g -Os -mcpu=cortex-m4 -mthumb -MMD'
+cc_compiler_options: 
+  - Wall
+  - g
+  - Os
+  - mcpu=cortex-m4
+  - mthumb
+  - MMD
 cpp_compiler_options: ' -std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti '
 CC: 'arm-none-eabi-gcc'
 CPP: 'arm-none-eabi-g++'
-linker_options: ' -Os -Wl,--gc-sections,--defsym=__rtc_localtime=0 --specs=nano.specs -mcpu=cortex-m4 -mthumb -Tteensy3/mk66fx1m0.ld '
+linker:
+  options: 
+    - Os 
+    - Wl,--gc-sections,--defsym=__rtc_localtime=0 --specs=nano.specs 
+    - mcpu=cortex-m4 
+    - mthumb 
+    - Tteensy3/mk66fx1m0.ld
 # simulator_options:  ' -cpu cortex-m3 -M lm3s6965evb -no-reboot -nographic -kernel'
 # simulator: 'qemu-system-arm'
 arduino_path:           '/home/al/tools/arduino/'
