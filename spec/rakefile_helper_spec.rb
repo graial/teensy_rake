@@ -390,10 +390,10 @@ RSpec.describe RakefileHelper do
 			delete_file_if_exists target_file.sub(unit_tests_folder, obj_folder).sub('.c', '_Runner.o')
 			
 			helper.create_runner_generator(target_file)
-			# helper.compile_test_files(target_file)
+			helper.compile_test_files(target_file)
 
-			# expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('.c', '.o'))).to be true
-			# expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('_Runner.c', '._Runner.o'))).to be true
+			expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('.c', '.o'))).to be true
+			expect(check_for_file(target_file.sub(unit_tests_folder, obj_folder).sub('.c', '_Runner.o'))).to be true
 		end
 
 		it "creates a list of test objs from a target Test file" do
@@ -413,6 +413,22 @@ RSpec.describe RakefileHelper do
 
 			expect(helper.check_for_source(header_with_source)).to eq(source_folder + 'Module1.c')
 			expect(helper.check_for_source(header_without_source)).to be false
+		end
+
+		it 'generates the test executable' do
+			target_exe = build_folder + "TestModule1.exe"
+			test_file = unit_tests_folder + "TestModule1.c"
+			test_objs = ['spec/spec_objs/Module1.o', 'spec/spec_objs/TestModule1.o', 'spec/spec_objs/unity.o', 'spec/spec_objs/TestModule1_Runner.o']
+			delete_file_if_exists(target_exe)
+
+			runner = helper.create_runner_generator(test_file)
+
+			# runner[0..1] are the Test sourcefiles
+			helper.compile_and_assemble(runner[0])
+			helper.compile_and_assemble(runner[1])
+			executable = helper.generate_executable(test_objs, test_file)
+
+			expect(check_for_file(target_exe)).to be true
 		end
 	end
 end

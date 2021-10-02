@@ -33,5 +33,6 @@ target:                 'spec-main'
 linker:
   options: 
     - Os 
+exe_filetype: '.exe'
 arduino_path:           '/home/al/tools/arduino/'
 tools_path:             'hardware/tools/'

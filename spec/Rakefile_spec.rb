@@ -17,7 +17,7 @@ RSpec.describe "Rakefile" do
 	end
 	
 	it 'defaults to unit tests' do
-		target_exe_filepath = build_folder + 'TestTeensyLedDriver.exe'
+		target_exe_filepath = build_folder + 'TestLedController.exe'
 		`rake`
 
 		expect(check_for_file(target_exe_filepath)).to eq(true)

@@ -15,6 +15,7 @@ TEMP_DIRS = [
 
 TEMP_DIRS.each do |dir|
   directory(dir)
+  CLEAN.include(dir + '*.o', dir + '*.exe')
   CLOBBER.include(dir + '*.elf', dir + '*.hex', dir + '*.testfail', dir + '*.testpass', dir + '*/*Runner.c')
 end
 
@@ -117,7 +118,7 @@ def link_it(exe_name, obj_list)
             (obj_list.map { |obj| "#{$cfg['linker']['object_files']['path']}#{obj} " }).join +
             $cfg['linker']['bin_files']['prefix'] + ' ' +
             $cfg['linker']['bin_files']['destination'] +
-            exe_name + $cfg['linker']['bin_files']['extension']
+            exe_name + $cfg['exe_filetype']
   execute(cmd_str)
 end
 
@@ -209,7 +210,7 @@ def run_tests(test_files)
     link_it(test_base, obj_list)
     # Execute unit test and generate results file
     simulator = build_simulator_fields
-    executable = $cfg['linker']['bin_files']['destination'] + test_base + $cfg['linker']['bin_files']['extension']
+    executable = $cfg['linker']['bin_files']['destination'] + test_base + $cfg['exe_filetype']
     cmd_str = if simulator.nil?
                 executable
               else

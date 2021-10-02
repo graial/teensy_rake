@@ -40,8 +40,8 @@ defines:
     - TEST
 linker:
   options:
-    - 'lm'
-    - 'm32'
+    - lm
+    - m32
   includes:
     prefix: '-I'
   object_files:
@@ -49,8 +49,8 @@ linker:
     extension: '.o'
   bin_files:
     prefix: '-o'
-    extension: '.exe'
     destination: *build_path
+exe_filetype: '.exe'
 colour: true
 :unity:
   :plugins: []

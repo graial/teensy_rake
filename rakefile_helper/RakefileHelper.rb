@@ -4,6 +4,7 @@ require 'pathname'
 require 'rake/clean'
 require 'colorize'
 require_relative '../unity.framework/auto/generate_test_runner'
+require_relative '../unity.framework/auto/colour_reporter'
 
 
 class RakefileHelper
@@ -129,9 +130,10 @@ puts shell_command
 	end
 
 	def link_obj(object_list, binary)
-		binary_path =  binary
+		output = " -o #{binary} "
 
-		string = " -o #{binary_path} "
+		string = ' '
+
 		if object_list.is_a?(Array)
 			object_list.each do |object|
 				string += object + " "
@@ -141,6 +143,8 @@ puts shell_command
 			puts "linker: " + linker_path
 			string += object_list + @linker_path
 		end
+
+		string += output
 puts "string: " + string
 		output = link(string)
 	end
@@ -286,7 +290,8 @@ puts "Running system tests..."
 			compile_and_assemble(runner_name)
 			objs = get_test_objs(test_file)
 
-			link_obj(objs, runner_name)
+			exe = generate_executable(objs, test_file)
+puts exe
 		end
 	end
 
@@ -352,4 +357,12 @@ puts "Running system tests..."
 		end
 		false
 	end
+
+	def generate_executable(objs, target)
+	    executable = build_folder + File.basename(target).sub('.c', @CONFIG['exe_filetype'])
+
+		link_obj(objs, executable)
+		report(`#{executable}`)
+	end
+
 end
