@@ -54,9 +54,10 @@ void test_LedController_does_not_read_the_LedMemoryMap_for_state(void)
   TEST_ASSERT_EQUAL_HEX16(0x80, virtualPin);
 }
 
+
 // void test_Unactivated_Led_will_return_LED_if_activated(void)
 // {
 //   LedController_Activate(10);
-//   TEST_ASSERT_EQUAL_HEX16(10, LedControllerSpy_GetLastId());
-//   TEST_ASSERT_EQUAL_HEX16(LIGHT_OFF, LedControllerSpy_GetLastState());
+//   TEST_ASSERT_EQUAL_HEX16(10, TeensySpy_GetLastId());
+//   TEST_ASSERT_EQUAL_HEX16(LIGHT_OFF, TeensySpy_GetLastState());
 // }
