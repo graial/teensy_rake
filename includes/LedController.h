@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 void LedController_Create(uint16_t * address);
 void LedController_Activate(int ledNumber);
 void LedController_TurnOn(int ledNumber);

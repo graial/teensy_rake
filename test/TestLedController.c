@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "LedController.h"
+#include "TeensySpy.h"
 
 static uint16_t virtualPin;
 

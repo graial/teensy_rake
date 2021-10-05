@@ -1,5 +1,5 @@
 #include "LedController.h"
-#include <Arduino.h>
+#include "Arduino.h"
 
 static uint16_t ledsImage;
 static uint16_t * ledsAddress;
@@ -18,17 +18,19 @@ void LedController_Create(uint16_t * address)
 
 void LedController_Activate(int ledNumber)
 {
-	// pinMode(ledNumber, OUTPUT);
+	pinMode(ledNumber, OUTPUT);
 }
 
 void LedController_TurnOn(int ledNumber)
 {
 	ledsImage |= getBitLocationFromLedNumber(ledNumber);
 	*ledsAddress = ledsImage;
+	digitalWriteFast(ledNumber, HIGH);
 }
 
 void LedController_TurnOff(int ledNumber)
 {
 	ledsImage &= ~(getBitLocationFromLedNumber(ledNumber));
 	*ledsAddress = ledsImage;
+	digitalWriteFast(ledNumber, LOW);
 } 
