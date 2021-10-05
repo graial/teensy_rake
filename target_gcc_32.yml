@@ -4,7 +4,7 @@ unity_source: &unity_source 'unity.framework/src/'
 compiler:
   source_path:     &source_path 'src/'
   includes_path:     &includes_path 'includes/'
-  target_path:     &target_path 'teensy3/'
+  target_path:     &target_path 'mocks/'
   objs_path:     &objs_path 'build/objs/'
   unit_tests_path: &unit_tests_path 'test/'
   build_path:      &build_path 'build/'
