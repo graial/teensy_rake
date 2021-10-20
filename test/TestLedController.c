@@ -1,8 +1,9 @@
 #include "unity.h"
 #include "LedController.h"
 #include "TeensySpy.h"
+#include "common.h"
 
-static uint16_t virtualPin;
+uint16_t virtualPin;
 
 void setUp(void)
 {
@@ -52,7 +53,14 @@ void test_LedController_does_not_read_the_LedMemoryMap_for_state(void)
 {
   virtualPin = 0xffff;
   LedController_TurnOn(8);
-  TEST_ASSERT_EQUAL_HEX16(0x80, virtualPin);
+}
+
+void test_LedController_knows_if_an_Led_is_On(void)
+{
+  LedController_TurnOn(8);
+  LedController_TurnOn(11);
+  TEST_ASSERT_TRUE(LedController_IsOn(8));
+  TEST_ASSERT_FALSE(LedController_IsOn(10));
 }
 
 

@@ -3,7 +3,8 @@
 
 void setUp(void)
 {
-  LedControllerSpy_Create();
+  uint16_t virtualPin;
+  LedController_Create(&virtualPin);
 }
 
 void tearDown(void)
