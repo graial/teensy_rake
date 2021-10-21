@@ -1,20 +1,22 @@
 #include <Arduino.h>
 
 extern "C" {
-	#include "LedController.h"
+  #include "LedController.h"
+  #include "LedScheduler.h"
 }
 
 extern "C" int main(void)
 {
 uint16_t activeLeds;
     LedController_Create(&activeLeds);
-    int boardLed = 13;
-    LedController_Activate(boardLed);
+    LedScheduler_Create();
 
-	while (1) {
-		LedController_TurnOn(boardLed);
-		delay(500);
-		LedController_TurnOff(boardLed);
-		delay(500);
-	}
+    int boardLed = 13;
+    int delay = 500;
+    LedController_Activate(boardLed);
+    LedScheduler_ScheduleDelay(boardLed, delay);
+
+  while (1) {
+    LedScheduler_WakeUp();
+  }
 }
