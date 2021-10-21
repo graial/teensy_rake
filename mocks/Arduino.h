@@ -11,4 +11,5 @@ enum
 void pinMode(uint8_t ledNumber,uint8_t io);
 void digitalWriteFast(uint8_t ledNumber, uint8_t level);
 
+typedef int elapsedMillis;
 #endif

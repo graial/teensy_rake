@@ -1,6 +1,9 @@
 #ifndef D_TeensySpy_H
 #define D_TeensySpy_H
 
+typedef int elapsedMillis;
+elapsedMillis timeCounter;
+
 #include <stdint.h>
 
 enum
@@ -16,5 +19,15 @@ void digitalWriteFast(uint8_t ledNumber, uint8_t LEVEL);
 
 int TeensySpy_GetLastId(void);
 int TeensySpy_GetLastState(void);
+
+void TeensySpy_AdvanceElapsedMillis(int milliseconds);
+void TeensySpy_ResetElapsedMillis(void);
+int TeensySpy_GetElapsedMillis(void);
+
+
+int TeensySpy_GetLastCallback(void);
+
+void testCallback(void);
+
 
 #endif

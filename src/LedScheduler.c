@@ -19,12 +19,12 @@ void LedScheduler_Create(void)
 {
 	scheduledEvent.id = UNUSED;
 
-	TimeService_SetPeriodicAlarmInMilliseconds(60, LedScheduler_WakeUp);
+	TimeService_SetPeriodicAlarmInMilliseconds(50, LedScheduler_WakeUp);
 }
 
 void LedScheduler_Destroy(void)
 {
-	TimeService_CancelPeriodicAlarmInMilliseconds(60, LedScheduler_WakeUp);
+	TimeService_CancelPeriodicAlarmInMilliseconds(50);
 }
 
 void LedScheduler_ScheduleDelay(int id, int milliseconds)
@@ -35,22 +35,21 @@ void LedScheduler_ScheduleDelay(int id, int milliseconds)
 
 void LedScheduler_WakeUp(void)
 {
-	// Time time;
-	// TimeService_GetTime(&time);
-
-	// if (scheduledEvent.id == UNUSED)
-	// {
-	// 	return;
-	// }
-	// if (time.milliseconds != scheduledEvent.milliseconds)
-	// {
-	// 	return;
-	// }
+	Time time;
+	TimeService_GetTime(&time);
+	if (scheduledEvent.id == UNUSED)
+	{
+		return;
+	}
+	if (time.milliseconds != scheduledEvent.milliseconds)
+	{
+		return;
+	}
 	if (LedController_IsOn(scheduledEvent.id))
 	{
 		LedController_TurnOff(scheduledEvent.id);
 	} else {
 		LedController_TurnOn(scheduledEvent.id);
 	}
-	TimeService_Delay(scheduledEvent.milliseconds);
+	// TimeService_Delay(scheduledEvent.milliseconds);
 }

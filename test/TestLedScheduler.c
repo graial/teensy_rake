@@ -67,7 +67,7 @@ void test_LedScheduler_Initializes_with_correct_alarm(void)
   TEST_ASSERT_EQUAL_PTR(
     &LedScheduler_WakeUp, 
     FakeTimeService_GetAlarmCallback());
-  TEST_ASSERT_EQUAL_HEX16(60, FakeTimeService_GetAlarmPeriod());
+  TEST_ASSERT_EQUAL_HEX16(50, FakeTimeService_GetAlarmPeriod());
 }
 
 void test_LedScheduler_Destroy_cancels_alarm(void)
