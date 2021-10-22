@@ -15,9 +15,9 @@ compiler:
     destination: *build_path
 CC: gcc
 cc_compiler_options:
+  - Wall
   - c
   - m32
-  - Wall
   - Wno-address
   # - std=c99
   - pedantic

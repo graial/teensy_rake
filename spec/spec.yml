@@ -20,7 +20,8 @@ mcu:                    'MK66FX1M0'
 CC:                     'gcc'
 cc_compiler_options:
   - c
-cpp_compiler_options:   ' '
+cpp_compiler_options:   
+  - cpp
 CPP:                    'g++'
 options:                ' '
 defines:
