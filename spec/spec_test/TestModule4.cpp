@@ -1,7 +1,7 @@
 // TestModule4.cpp correctly prefixed, should be recognized by Rakefile
 
 #include "unity.h"
-#include "Module1.h"
+#include "Module4.h"
 #include "other_module.h"
 
 extern "C"{

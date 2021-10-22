@@ -56,7 +56,7 @@ class RakefileHelper
 
 		@objs_folder = @CONFIG['compiler']['objs_path']
 		@objs_list = get_objs_list
-		@cpp_compiler_options = @CONFIG['cpp_compiler_options']
+		@cpp_compiler_options ||= get_compiler_options('CPP') if @CONFIG['cpp_compiler_options']
 		
 		@elf_path = build_folder + @CONFIG['target'] + '.elf' if elf_path
 		@hex_path = build_folder + @CONFIG['target'] + '.hex' if hex_path
@@ -122,7 +122,7 @@ puts shell_command
 			output = gcc(string)
 		when '.cpp'
 			string = "#{@defines} #{@includes} -c -o #{object} #{source} "
-# puts "cpp: #{string}"
+puts "cpp: #{string}"
 			output = gpp(string)
 		else
 			raise "RakefileHelper error: #{target} is an invalid sourcefile"
@@ -153,6 +153,8 @@ puts shell_command
 	def get_compiler_options(compiler)
 		if compiler == 'CC' 
 			options_list = @CONFIG['cc_compiler_options']
+		elsif compiler == 'CPP' 
+			options_list = @CONFIG['cpp_compiler_options']
 		elsif compiler == 'linker'
 			options_list = @CONFIG['linker']['options']
 		end
@@ -341,6 +343,7 @@ puts "objs" + objs.to_s
 			source = check_for_source(include)
 			
 			if source
+puts "source: " + source				
 				compile_and_assemble(source)
 				objs.push(include.sub(unit_tests_folder,objs_folder).sub(".h", ".o")) 
 			end
@@ -350,18 +353,20 @@ puts "objs" + objs.to_s
 
 	def check_for_source(header)
 		header_name = File.basename(header)
-		source_name = header_name.sub('.h', '.c')
+		['.cpp', '.c'].each do |ext|
+			source_name = header_name.sub('.h', ext)
 
-		if File.exist?(source_folder + source_name) 
-			return source_folder + source_name
-		elsif File.exist?(unity_source + source_name) 
-			return unity_source + source_name
-		elsif File.exist?(mocks_folder + source_name) 
-			return mocks_folder + source_name
-		else
-			get_subfolders(source_folder).each do |subfolder|
-				if File.exist?(subfolder + source_name) 
-					return subfolder + source_name
+			if File.exist?(source_folder + source_name) 
+				return source_folder + source_name
+			elsif File.exist?(unity_source + source_name) 
+				return unity_source + source_name
+			elsif File.exist?(mocks_folder + source_name) 
+				return mocks_folder + source_name
+			else
+				get_subfolders(source_folder).each do |subfolder|
+					if File.exist?(subfolder + source_name) 
+						return subfolder + source_name
+					end
 				end
 			end
 		end

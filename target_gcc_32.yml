@@ -21,6 +21,12 @@ cc_compiler_options:
   - Wno-address
   # - std=c99
   - pedantic
+CPP: g++
+cpp_compiler_options: 
+  - std=gnu++14
+  - felide-constructors
+  - fno-exceptions
+  - fno-rtti
 includes:
   prefix: '-I'
   items:

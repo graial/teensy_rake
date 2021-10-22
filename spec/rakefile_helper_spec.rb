@@ -350,7 +350,6 @@ RSpec.describe RakefileHelper do
 		end
 
 		it "runs tests" do
-helper.run_tests
 			expect{ helper.run_tests }.to output(/Running system tests.../).to_stdout 
 		end
 		it "adds a -DTEST to the gcc call" do 
@@ -416,9 +415,11 @@ helper.run_tests
 
 		it "searches the sources folder for a given header and returns it if found" do
 			header_with_source = source_folder + 'includes/Module1.h'
+			header_with_cpp_source = source_folder + 'includes/Module4.h'
 			header_without_source = source_folder + 'includes/other_module.h'
 
 			expect(helper.check_for_source(header_with_source)).to eq(source_folder + 'Module1.c')
+			expect(helper.check_for_source(header_with_cpp_source)).to eq(source_folder + 'Module4.cpp')
 			expect(helper.check_for_source(header_without_source)).to be false
 		end
 

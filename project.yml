@@ -32,7 +32,14 @@ cc_compiler_options:
   - mcpu=cortex-m4
   - mthumb
   - MMD
-cpp_compiler_options: ' -std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti '
+cpp_compiler_options: 
+  - std=gnu++14 
+  - mcpu=cortex-m4
+  - mthumb
+  - MMD
+  - felide-constructors 
+  - fno-exceptions 
+  - fno-rtti
 CC: 'arm-none-eabi-gcc'
 CPP: 'arm-none-eabi-g++'
 linker:
