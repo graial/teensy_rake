@@ -49,3 +49,8 @@ void TimeService_CancelPeriodicAlarmInMilliseconds(int milliseconds)
     callback = NULL;
     period = 0;
 }
+
+void TimeService_Reset(void)
+{
+    
+}

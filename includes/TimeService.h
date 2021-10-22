@@ -14,6 +14,7 @@ typedef void (*WakeUpCallback)(void);
 extern "C" {
 #endif
     void TimeService_GetTime(Time * time);
+    void TimeService_Reset(void);
     void TimeService_SetPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb);
     void TimeService_CancelPeriodicAlarmInMilliseconds(int milliseconds);
 #ifdef __cplusplus

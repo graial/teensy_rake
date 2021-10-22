@@ -41,7 +41,7 @@ void LedScheduler_WakeUp(void)
 	{
 		return;
 	}
-	if (time.milliseconds != scheduledEvent.milliseconds)
+	if (time.milliseconds < scheduledEvent.milliseconds)
 	{
 		return;
 	}
@@ -51,5 +51,5 @@ void LedScheduler_WakeUp(void)
 	} else {
 		LedController_TurnOn(scheduledEvent.id);
 	}
-	// TimeService_Delay(scheduledEvent.milliseconds);
+	TimeService_Reset();
 }

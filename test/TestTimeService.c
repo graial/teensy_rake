@@ -41,3 +41,11 @@ void test_TimeService_GetTime_triggers_callback_if_timeCounter_exceeds_set_delay
    TimeService_CheckForPeriodicAlarm();
    TEST_ASSERT_TRUE(TeensySpy_GetLastCallback());
 }
+
+void test_TimeService_Reset_sets_timeCounter_back_to_0(void)
+{
+   TimeService_SetPeriodicAlarmInMilliseconds(10, testCallback);
+   TeensySpy_AdvanceElapsedMillis(12);
+   TimeService_Reset();
+   TEST_ASSERT_EQUAL_HEX16(0, TeensySpy_GetElapsedMillis());
+}

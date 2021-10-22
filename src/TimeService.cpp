@@ -2,6 +2,7 @@ extern "C" {
 	#include "TimeService.h"
 	#include "common.h"
 }
+
 #include "Arduino.h"
 
 elapsedMillis timeCounter;
@@ -13,11 +14,11 @@ void TimeService_Delay(int milliseconds)
 	// delay(milliseconds);
 }
 
-void TimeService_GetTime(Time * time)
-{
-	time->milliseconds = timeCounter;
-}
 extern "C" {
+	void TimeService_GetTime(Time * time)
+	{
+		time->milliseconds = timeCounter;
+	}
 	void TimeService_SetPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb)
 	{
 		board_delay = milliseconds;
@@ -39,5 +40,9 @@ extern "C" {
 			(callback)();
 			timeCounter = 0;
 		}
+	}
+	void TimeService_Reset()
+	{
+		timeCounter = 0;
 	}
 }
