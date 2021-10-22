@@ -122,7 +122,7 @@ puts shell_command
 			output = gcc(string)
 		when '.cpp'
 			string = "#{@defines} #{@includes} -c -o #{object} #{source} "
-puts "cpp: #{string}"
+# puts "cpp: #{string}"
 			output = gpp(string)
 		else
 			raise "RakefileHelper error: #{target} is an invalid sourcefile"
@@ -282,7 +282,7 @@ puts reboot_command
 	  list = FileList.new(test_path)
 	  list.add(cpp_test_path)
 	  list.add(mocks_path)
-puts "test_files: " + list.to_s
+# puts "test_files: " + list.to_s
 		list
 	end
 
@@ -290,14 +290,14 @@ puts "test_files: " + list.to_s
 puts "Running system tests..."
 
 		unit_test_files.each do |test_file|
-puts "test_file: " + test_file
+# puts "test_file: " + test_file
 			compile_and_assemble(test_file)
 			runner_name = generate_runner_name(test_file)
 			test_gen = create_runner_generator(test_file)
 
 			compile_and_assemble(runner_name)
 			objs = get_test_objs(test_file)
-puts "objs" + objs.to_s
+# puts "objs" + objs.to_s
 			exe = generate_executable(objs, test_file)
 puts exe
 		end
@@ -338,12 +338,12 @@ puts exe
 				objs.push(objs_folder + File.basename(filename, '.*') + "_Runner.o")
 			end
 		end
-puts "objs" + objs.to_s
+# puts "objs" + objs.to_s
 		extract_headers(filename).each do |include|
 			source = check_for_source(include)
 			
 			if source
-puts "source: " + source				
+# puts "source: " + source				
 				compile_and_assemble(source)
 				objs.push(include.sub(unit_tests_folder,objs_folder).sub(".h", ".o")) 
 			end
