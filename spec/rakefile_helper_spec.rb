@@ -330,7 +330,7 @@ RSpec.describe RakefileHelper do
 			expect(helper.squash("-flag ", arr)).to eq(" -flag option1 -flag option2")
 		end
 		it "identifies test files within the 'test' and 'mocks' folders, prefixed by Test" do
-			expect(helper.unit_test_files).to contain_exactly('spec/spec_test/TestModule1.c', 'spec/spec_mocks/TestModuleSpy.c')
+			expect(helper.unit_test_files).to contain_exactly('spec/spec_test/TestModule1.c', 'spec/spec_mocks/TestModuleSpy.c', 'spec/spec_test/TestModule4.cpp')
 		end
 	end
 
@@ -350,6 +350,7 @@ RSpec.describe RakefileHelper do
 		end
 
 		it "runs tests" do
+helper.run_tests
 			expect{ helper.run_tests }.to output(/Running system tests.../).to_stdout 
 		end
 		it "adds a -DTEST to the gcc call" do 
@@ -358,11 +359,17 @@ RSpec.describe RakefileHelper do
 		it "gets the list of test files" do
 			expect{ helper.run_tests }.to (
 				output(/spec_test\/TestModule1.c/).to_stdout &&
-				output(/spec_mocks\/TestModuleSpy.c/).to_stdout
+				output(/spec_mocks\/TestModuleSpy.c/).to_stdout &&
+				output(/spec_test\/TestModule4.cpp/).to_stdout 
 			)
 		end
 		it "rename a test runner and locates it in the build folder" do
 			test_file = 'spec/spec_mocks/TestRandom.c'
+			expect(helper.generate_runner_name(test_file)).to eq('spec/spec_objs/TestRandom_Runner.c')
+		end
+
+		it "renames a cpp test runner and locates it in the build folder" do
+			test_file = 'spec/spec_mocks/TestRandom.cpp'
 			expect(helper.generate_runner_name(test_file)).to eq('spec/spec_objs/TestRandom_Runner.c')
 		end
 		it "creates a UnityTestRunnerGenerator object" do

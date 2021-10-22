@@ -66,6 +66,7 @@ class RakefileHelper
 		
 		@usb_addresses = @SYSTEM['usb_addresses']
 		@C_EXTENSION = '.c'.freeze
+		@CPP_EXTENSION = '.cpp'.freeze
 	end
 	
 	def load_helper_config(args)
@@ -145,7 +146,7 @@ puts shell_command
 		end
 
 		string += output
-puts "string: " + string
+# puts "string: " + string
 		output = link(string)
 	end
 
@@ -274,36 +275,41 @@ puts reboot_command
 
 	def unit_test_files
 	  test_path = (@unit_tests_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
+	  cpp_test_path = (@unit_tests_folder + '**/Test*' + @CPP_EXTENSION).tr('\\', '/')
 	  mocks_path = (@mocks_folder + '**/Test*' + @C_EXTENSION).tr('\\', '/')
 	  list = FileList.new(test_path)
+	  list.add(cpp_test_path)
 	  list.add(mocks_path)
+puts "test_files: " + list.to_s
+		list
 	end
 
 	def run_tests
 puts "Running system tests..."
 
 		unit_test_files.each do |test_file|
+puts "test_file: " + test_file
 			compile_and_assemble(test_file)
-			test_gen = create_runner_generator(test_file)
 			runner_name = generate_runner_name(test_file)
+			test_gen = create_runner_generator(test_file)
 
 			compile_and_assemble(runner_name)
 			objs = get_test_objs(test_file)
-
+puts "objs" + objs.to_s
 			exe = generate_executable(objs, test_file)
 puts exe
 		end
 	end
 
 	def generate_runner_name(filename)
-		basename = File.basename(filename, '.c')
+		basename = File.basename(filename, '.*')
 		runner_name = basename + '_Runner.c'
 		runner_name = @objs_folder + runner_name
 	end
 
 	def create_runner_generator(test)
 		test_gen = UnityTestRunnerGenerator.new(@CONFIG)
-		test_gen.run(test, objs_folder + File.basename(test).sub('.c', '_Runner.c'))
+		test_gen.run(test, generate_runner_name(test))
 	end
 
 	def extract_headers(filename)
@@ -323,10 +329,14 @@ puts exe
 	end
 
 	def get_test_objs(filename)
-		objs = [
-			objs_folder + File.basename(filename.sub(".c", ".o")),
-			objs_folder + File.basename(filename.sub(".c", "_Runner.o"))
-		]
+		objs = []
+		['.c', '.cpp'].each do |ext|
+			if File.extname(filename) == ext
+				objs.push(objs_folder + File.basename(filename, '.*') + ".o")
+				objs.push(objs_folder + File.basename(filename, '.*') + "_Runner.o")
+			end
+		end
+puts "objs" + objs.to_s
 		extract_headers(filename).each do |include|
 			source = check_for_source(include)
 			
