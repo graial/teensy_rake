@@ -1,6 +1,5 @@
 # Rakefile
 require 'rake/clean'
-require_relative 'rakefile_helper'
 require_relative 'rakefile_helper/RakefileHelper'
 require 'colorize'
 
