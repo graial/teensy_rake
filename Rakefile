@@ -4,6 +4,20 @@ require_relative 'rakefile_helper'
 require_relative 'rakefile_helper/RakefileHelper'
 require 'colorize'
 
+
+C_EXTENSION = '.c'.freeze
+
+
+TEMP_DIRS = [
+  File.join(__dir__, 'build/')
+].freeze
+
+TEMP_DIRS.each do |dir|
+  directory(dir)
+  CLEAN.include(dir + '*.o', dir + '*.exe')
+  CLOBBER.include(dir + '*.elf', dir + '*.hex', dir + '*.testfail', dir + '*.testpass', dir + '*/*Runner.c')
+end
+
 helper = RakefileHelper.new
 
 objs_list = helper.objs_list
