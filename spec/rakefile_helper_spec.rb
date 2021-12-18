@@ -303,7 +303,7 @@ RSpec.describe RakefileHelper do
 		wait_for_usb
 		usb_port = get_usb_port
 
-		expect(`head -n 6 #{usb_port}`).to include("G'day from rspec!") 
+		expect(`head -n 2 #{usb_port}`).to include("G'day from rspec!") 
 	end
 
 	describe "system checks" do
