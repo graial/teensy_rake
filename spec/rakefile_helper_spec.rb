@@ -3,7 +3,7 @@ require_relative 'helper_methods/helper_methods'
 require_relative 'support/teensy'
 
 RSpec.describe RakefileHelper do
-	let(:project_yaml) { YAML.load(File.read("project.yml")) }
+	let(:project_yaml) { YAML.load(File.read("target_teensy.yml")) }
 	let(:spec_yaml) { YAML.load(File.read("spec/spec.yml")) }
 	let(:helper) { RakefileHelper.new({mode: 'test'}) }
 	let(:obj_folder) { helper.objs_folder }

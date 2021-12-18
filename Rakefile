@@ -5,6 +5,9 @@ require 'colorize'
 
 C_EXTENSION = '.c'.freeze
 
+DEFAULT_DEPLOY_CONFIG = 'target_teensy.yml'.freeze
+DEFAULT_TEST_CONFIG = 'target_testing.yml'.freeze
+
 TEMP_DIRS = [
   File.join(__dir__, 'build/')
 ].freeze
@@ -15,7 +18,7 @@ TEMP_DIRS.each do |dir|
   CLOBBER.include(dir + '*.elf', dir + '*.hex', dir + '*.testfail', dir + '*.testpass', dir + '*/*Runner.c')
 end
 
-helper = RakefileHelper.new
+helper = RakefileHelper.new(config: DEFAULT_DEPLOY_CONFIG)
 
 objs_list = helper.objs_list
 sources_list = helper.sources_list
@@ -29,17 +32,13 @@ task :prepare_for_tests  do
 
 	TEMP_DIRS
   
-  DEFAULT_CONFIG_FILE = 'target_gcc_32.yml'.freeze
-  helper = RakefileHelper.new(config: DEFAULT_CONFIG_FILE)
+  helper = RakefileHelper.new(config: DEFAULT_TEST_CONFIG)
 
   objs_list = helper.objs_list
   sources_list = helper.sources_list
 
   helper.configure_clean
 end
-
-# Load default configuration, for now
-
 
 
 task unit: [:prepare_for_tests] do
@@ -79,7 +78,6 @@ task prepare_teensy_hex: [:build_for_teensy] do
   helper.copy_hex(target_elf)   
 end
 
-  
 task :build_for_teensy => objs_list do
   puts "Building for teensy".yellow
 end

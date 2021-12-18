@@ -30,7 +30,7 @@ class RakefileHelper
 				:unity_source				
 
 	def initialize(*args)
-			@config_file = 'project.yml' 
+			@config_file = 'target_teensy.yml' 
 			@system_file = 'system.yml' 
 		if args.count > 0
 			args = args[0]

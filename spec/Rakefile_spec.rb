@@ -3,7 +3,7 @@ require_relative 'helper_methods/helper_methods'
 require_relative 'support/teensy'
 
 RSpec.describe "Rakefile" do
-	let(:project_yaml) { YAML.load(File.read("project.yml")) }
+	let(:project_yaml) { YAML.load(File.read("target_teensy.yml")) }
 	let(:build_folder) { project_yaml["compiler"]["build_path"] }
 	let(:objs_folder) { project_yaml["compiler"]["objs_path"] }
 	let(:target_elf_filepath) { build_folder + 'main.elf' }
