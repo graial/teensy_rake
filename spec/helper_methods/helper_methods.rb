@@ -1,5 +1,6 @@
 require 'rake'
-
+require 'yaml'
+	
 def check_for_file(file)
 	File.exist?(file)
 end
@@ -88,21 +89,31 @@ def run_executable(exe)
 	`./#{exe}`
 end
 
+def get_system_usbs
+	sysfile = YAML.load(File.read("system.yml"))
+	sysfile['usb_addresses']
+end
 
 def get_usb_port
-	if system("test -e \"/dev/ttyACM0\"")
-		'/dev/ttyACM0'
-	elsif system("test -e \"/dev/ttyACM1\"")
-		'/dev/ttyACM1'
-	else
-		nil
+	usbs = get_system_usbs
+	usbs.each do |usb|
+		if system("test -e \"#{usb}\"")
+			return usb
+		end
 	end
+	return nil
 end
 
 def wait_for_usb
 	puts "trying teensy usb port"
-	while (!system("test -e \"/dev/ttyACM0\"") && !system("test -e \"/dev/ttyACM1\"")) do
-		puts "trying teensy usb port again"
+	usbs = get_system_usbs
+	10.times do
+		usbs.each do |usb|	
+			if system("test -e \"#{usb}\"")
+				return
+			end
+		end
+		puts "trying usb ports again"
 		sleep(0.5)
 	end
 end
