@@ -3,9 +3,7 @@ require 'rake/clean'
 require_relative 'rakefile_helper/RakefileHelper'
 require 'colorize'
 
-
 C_EXTENSION = '.c'.freeze
-
 
 TEMP_DIRS = [
   File.join(__dir__, 'build/')
@@ -56,13 +54,17 @@ task unit_stage_2: [:prepare_for_tests] do
   run_tests helper.unit_test_files
 end
 
-task deploy_teensy: [:prepare_teensy_hex] do
+task :deploy, [:target, :prepare_teensy_hex] do |t, args|
   if helper.usb_port == nil
-      puts "no valid USB".red
+    puts "no valid USB".red
+    return
+  end
+  if args[:target] == 'teensy'
+    puts "Deploying to #{helper.usb_port}".yellow
+    target = 'main'
+    helper.load_to_teensy(target)
   else
-      puts "Deploying to #{helper.usb_port}".yellow
-      target = 'main'
-      helper.load_to_teensy(target)
+    puts "`#{args[:target]}` is not a recognized target".yellow
   end
 end
 

@@ -22,6 +22,12 @@ RSpec.describe "Rakefile" do
 
 		expect(check_for_file(target_exe_filepath)).to eq(true)
 	end
+	
+	it 'fails to deploy onto a non-existant target', :teensy => true do
+		skip unless	 get_usb_port
+
+		expect(`rake deploy[turkey]`).to include('`turkey` is not a recognized target')
+	end
 
 	# it 'deploys onto teensy', :teensy => true do
 	# 	skip unless	 get_usb_port
@@ -29,7 +35,7 @@ RSpec.describe "Rakefile" do
 	# 	delete_file_if_exists(target_elf_filepath)
 	# 	delete_file_if_exists(target_hex_filepath)
 
-	# 	`rake deploy_teensy`
+	# 	`rake deploy[teensy]`
 
 	# 	expect(check_for_file(target_elf_filepath)).to eq(true)
 	# 	expect(check_for_file(target_hex_filepath)).to eq(true)
