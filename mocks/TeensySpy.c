@@ -9,7 +9,7 @@ void TeensySpy_Create()
 {
   lastId = LED_ID_UNKNOWN;
   lastState = LED_STATE_UNKNOWN;
-  timeCounter = 0;
+  // timeCounter = 0;
   callback = FALSE;
 }
 
@@ -41,25 +41,25 @@ int TeensySpy_GetLastState(void)
   return lastState;
 }
 
-int TeensySpy_GetElapsedMillis(void)
-{
-	return timeCounter;
-}
+// int TeensySpy_GetElapsedMillis(void)
+// {
+// 	return timeCounter;
+// }
 
-void TeensySpy_AdvanceElapsedMillis(int milliseconds)
-{
-	timeCounter += milliseconds;
-}
+// void TeensySpy_AdvanceElapsedMillis(int milliseconds)
+// {
+// 	timeCounter += milliseconds;
+// }
 
-void TeensySpy_ResetElapsedMillis(void)
-{
-	timeCounter = 0;
-}
+// void TeensySpy_ResetElapsedMillis(void)
+// {
+// 	timeCounter = 0;
+// }
 
-int TeensySpy_GetLastCallback(void)
-{
-    return callback;
-}
+// int TeensySpy_GetLastCallback(void)
+// {
+//     return callback;
+// }
 
 void testCallback(void)
 {

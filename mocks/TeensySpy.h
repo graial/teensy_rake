@@ -2,7 +2,7 @@
 #define D_TeensySpy_H
 
 typedef int elapsedMillis;
-elapsedMillis timeCounter;
+// elapsedMillis timeCounter;
 
 #include <stdint.h>
 
