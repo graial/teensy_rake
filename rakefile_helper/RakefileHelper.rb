@@ -214,8 +214,8 @@ puts shell_command
 		Rake::FileList.new(
 				source_folder + "**/*.c",
 				source_folder + "**/*.cpp",
-				@target_folder + "*.c",
-				@target_folder + "*.cpp"
+				@target_folder + "**/*.c",
+				@target_folder + "**/*.cpp"
 			) if source_folder
 	end
 

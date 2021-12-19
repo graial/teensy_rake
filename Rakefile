@@ -43,8 +43,7 @@ end
 
 task unit: [:prepare_for_tests] do
   puts "Running unit tests".yellow
-puts helper.unit_test_files.to_s.yellow
-  # run_tests helper.unit_test_files
+  puts helper.unit_test_files.to_s.yellow
   helper.run_tests
 end
 
@@ -53,7 +52,7 @@ task unit_stage_2: [:prepare_for_tests] do
   run_tests helper.unit_test_files
 end
 
-task :deploy, [:target] => [:prepare_binary] do |t, args|
+task :deploy, [:target] do |t, args|
   if helper.usb_port == nil
     puts "no valid USB".red
     return
@@ -61,10 +60,12 @@ task :deploy, [:target] => [:prepare_binary] do |t, args|
 
   case args[:target] 
   when 'teensy'
+    :prepare_teensy_binary
     puts "Deploying to #{helper.usb_port}".yellow
     target = 'main'
     helper.load_to_teensy(target)
   when 'KL25Z'
+    :prepare_KL25Z_binary
     `cp build/dac_adc.srec /run/media/al/FRDM-KL25Z/`
   else
     puts "`#{args[:target]}` is not a recognized target".yellow
