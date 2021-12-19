@@ -15,10 +15,8 @@ class RakefileHelper
 				:unit_tests_folder,
 				:mocks_folder,
 				:target_folder,
-				:sources_list,
 				:includes,
 				:usb_addresses,
-				:objs_list,
 				:linker_path,
 				:cc_compiler_options,
 				:cpp_compiler_options,
@@ -48,14 +46,12 @@ class RakefileHelper
 		@MCU = @CONFIG['mcu']
 		@linker_path = @target_folder + @MCU.downcase + '.ld' if (@target_folder && @MCU)
 
-		@sources_list ||= get_sources_list
 		@defines ||= get_defines if @CONFIG['defines']
 		@includes ||= get_includes if @CONFIG['includes']
 		@cc_compiler_options ||= get_compiler_options('CC') if @CONFIG['cc_compiler_options']
 		@linker_options ||= get_compiler_options('linker')	if @CONFIG['linker']
 
 		@objs_folder = @CONFIG['compiler']['objs_path']
-		@objs_list = get_objs_list
 		@cpp_compiler_options ||= get_compiler_options('CPP') if @CONFIG['cpp_compiler_options']
 		
 		@elf_path = build_folder + @CONFIG['target'] + '.elf' if elf_path
@@ -130,9 +126,9 @@ puts shell_command
 		return output
 	end
 
-	def link_obj(object_list, binary)
+	def link_obj(object_list, binary, targetlib = nil)
 		output = " -o #{binary} "
-
+		output += "-lmy#{targetlib} -Lbuild -lc -lrdimon " if targetlib
 		string = ' '
 
 		if object_list.is_a?(Array)
@@ -186,14 +182,18 @@ puts shell_command
 		Dir.glob("#{folder}*/")
 	end
 
-	def get_objs_list
-		if sources_list
-			sources_list.map do |src|
-				base = File.basename(src)
-				objs_folder + base
-					.gsub('.cpp', '.o')
-					.gsub('.c', '.o')
-			end
+	def map_sources_to_objs(list)
+		list.map do |src|
+			get_objfile(src)
+		end
+	end
+
+	def objs_list(type)
+		case type
+		when :source
+			map_sources_to_objs(sources_list)
+		when :target
+			map_sources_to_objs(target_sources_list)
 		end
 	end
 
@@ -210,10 +210,15 @@ puts shell_command
 		`#{shell_command}`
 	end
 
-	def get_sources_list
+	def sources_list
 		Rake::FileList.new(
 				source_folder + "**/*.c",
-				source_folder + "**/*.cpp",
+				source_folder + "**/*.cpp"
+			) if source_folder
+	end
+
+	def target_sources_list
+		Rake::FileList.new(
 				@target_folder + "**/*.c",
 				@target_folder + "**/*.cpp"
 			) if source_folder
@@ -230,8 +235,10 @@ puts shell_command
 	end
 
 	def get_objfile(src_path)
-		source = Pathname.new(src_path)
-		object = objs_folder + source.basename.to_s.split('.')[0] + '.o'
+		base = File.basename(src_path)
+		objs_folder + base
+			.gsub('.cpp', '.o')
+			.gsub('.c', '.o')
 	end
 
 	def configure_clean

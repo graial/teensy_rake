@@ -20,8 +20,10 @@ end
 
 helper = RakefileHelper.new(config: DEFAULT_DEPLOY_CONFIG)
 
-objs_list = helper.objs_list
+source_objs_list = helper.objs_list(:source)
+target_objs_list = helper.objs_list(:target)
 sources_list = helper.sources_list
+target_sources_list = helper.target_sources_list
 
 CLEAN.include(helper.objs_folder + '*.o',helper.objs_folder + '*.d',)
 
@@ -34,7 +36,7 @@ task :prepare_for_tests  do
   
   helper = RakefileHelper.new(config: DEFAULT_TEST_CONFIG)
 
-  objs_list = helper.objs_list
+  objs_list = helper.objs_list(:source)
   sources_list = helper.sources_list
 
   helper.configure_clean
@@ -76,19 +78,33 @@ task :prepare_KL25Z_binary do
   `arm-none-eabi-objcopy -O srec #{helper.build_folder}dac_adc.elf #{helper.build_folder}dac_adc.srec`
 end
 
-task prepare_teensy_binary: [:build_for_teensy] do
+task prepare_teensy_binary: [:build_for_teensy, :build_main] do
   puts "Build successful, preparing to link".yellow
   target = 'main'
   target_elf = helper.build_folder + target + '.elf '
-  helper.link_obj(helper.objs_list, target_elf)
+  helper.link_obj(source_objs_list, target_elf)
   puts 'fetching .elf size'.yellow
   helper.get_elf_size
   puts 'copying .elf to hex'.yellow
   helper.copy_hex(target_elf)   
 end
 
-task :build_for_teensy => objs_list do
+task :build_for_teensy => target_objs_list do
   puts "Building for teensy".yellow
+  puts "preparing teensy library".yellow
+  `ar rc build/libmyteensy.a #{helper.squash("",target_objs_list)}`
+end
+
+task :build_main => source_objs_list do
+  puts "Building main".yellow
+end
+
+target_sources_list.each do |source|
+  obj = helper.get_objfile(source)
+  file obj => source do
+puts "compiling: #{source}".yellow
+    exit if helper.compile_and_assemble(source).include?("ABORT")
+  end
 end
 
 sources_list.each do |source|

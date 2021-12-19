@@ -120,33 +120,42 @@ RSpec.describe RakefileHelper do
 
 			expect(check_for_file(obj_filepath)).to eq(true)
 		end
-		it 'knows its sources list' do
-			source1 = source_folder + 'main.c'
-			source2 = source_folder + 'module.c'
-			source3 = source_folder + 'sub_src/module_in_sub.c'
-			expect(helper.sources_list).to include(source1, source2, source3)
-		end
+		describe "fetching sources and their objects" do
+			let(:source1) { source_folder + 'main.c' }
+			let(:source2) { source_folder + 'module.c' }
+			let(:source3) { source_folder + 'sub_src/module_in_sub.c' }
+			let(:source4) { source_folder + 'mainPlus.cpp' }
+			let(:target) { target_folder + 'module_in_target.c' }
+			let(:source_array) { [source1, source2, source3, source4] }
+			let(:target_array) { [target] }
+			it 'knows its sources list' do
+				expect(helper.sources_list).to include(source1, source2, source3)
+				expect(helper.sources_list).not_to include(target)
+			end
 
-		it 'knows its objs list' do
-			allow(helper).to receive(:get_sources_list).and_return(
-				[
-					source_folder + 'main.c',
-					source_folder + 'main_with_other.c',
-					source_folder + 'sub_src/module_in_sub.c',
-					target_folder + 'module.c',
-					source_folder + 'mainPlus.cpp'
-				]
-			)
-			
-			obj1 = obj_folder + 'main.o'
-			obj2 = obj_folder + 'main_with_other.o'
-			obj3 = obj_folder + 'module.o'
-			obj4 = obj_folder + 'mainPlus.o'
-			obj5 = obj_folder + 'module_in_sub.o'
+			it 'knows the source list of its target' do
+				expect(helper.target_sources_list).to include(target)
+				expect(helper.target_sources_list).not_to include(source1, source2, source3)
+			end
 
-			expect(helper.objs_list).to include(obj1, obj2, obj3, obj4, obj5)
-		end
-		
+			it 'knows its objs list' do
+				allow(helper)
+					.to receive(:sources_list)
+					.and_return(source_array)
+				
+				obj1 = obj_folder + 'main.o'
+				obj2 = obj_folder + 'module.o'
+				obj3 = obj_folder + 'module_in_target.o'
+				obj4 = obj_folder + 'mainPlus.o'
+				obj5 = obj_folder + 'module_in_sub.o'
+
+				expect(helper.objs_list(:source)).to include(obj1, obj2, obj4, obj5)
+				expect(helper.objs_list(:source)).not_to include(obj3)
+
+				expect(helper.objs_list(:target)).to include(obj3)
+				expect(helper.objs_list(:target)).not_to include(obj1, obj2, obj4, obj5)
+			end
+		end		
 		it 'return the target .o file for a given source' do
 			c_in_source = helper.source_folder + 'c_source_obj.c'
 			cpp_in_target = helper.target_folder + 'cpp_target_obj.cpp'
@@ -303,7 +312,7 @@ RSpec.describe RakefileHelper do
 		wait_for_usb
 		usb_port = get_usb_port
 
-		expect(`head -n 2 #{usb_port}`).to include("G'day from rspec!") 
+		expect(`head -n 4 #{usb_port}`).to include("G'day from rspec!") 
 	end
 
 	describe "system checks" do
