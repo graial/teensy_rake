@@ -5,7 +5,9 @@ require 'colorize'
 
 C_EXTENSION = '.c'.freeze
 
-DEFAULT_DEPLOY_CONFIG = 'target_teensy.yml'.freeze
+target = ENV["RAKE_TARGET"] ? ENV["RAKE_TARGET"] : 'teensy'
+
+DEPLOY_CONFIG = "target_#{target}.yml".freeze
 DEFAULT_TEST_CONFIG = 'target_testing.yml'.freeze
 
 TEMP_DIRS = [
@@ -18,14 +20,14 @@ TEMP_DIRS.each do |dir|
   CLOBBER.include(dir + '*.elf', dir + '*.hex', dir + '*.testfail', dir + '*.testpass', dir + '*/*Runner.c')
 end
 
-helper = RakefileHelper.new(config: DEFAULT_DEPLOY_CONFIG)
+HELPER = RakefileHelper.new(config: DEPLOY_CONFIG)
 
-source_objs_list = helper.objs_list(:source)
-target_objs_list = helper.objs_list(:target)
-sources_list = helper.sources_list
-target_sources_list = helper.target_sources_list
+source_objs_list = HELPER.objs_list(:source)
+target_objs_list = HELPER.objs_list(:target)
+sources_list = HELPER.sources_list
+target_sources_list = HELPER.target_sources_list
 
-CLEAN.include(helper.objs_folder + '*.o',helper.objs_folder + '*.d',)
+CLEAN.include(HELPER.objs_folder + '*.o',HELPER.objs_folder + '*.d',)
 
 task default: [:unit]
 
@@ -34,83 +36,85 @@ task :prepare_for_tests  do
 
 	TEMP_DIRS
   
-  helper = RakefileHelper.new(config: DEFAULT_TEST_CONFIG)
+  HELPER = RakefileHelper.new(config: DEFAULT_TEST_CONFIG)
 
-  objs_list = helper.objs_list(:source)
-  sources_list = helper.sources_list
+  objs_list = HELPER.objs_list(:source)
+  sources_list = HELPER.sources_list
 
-  helper.configure_clean
+  HELPER.configure_clean
 end
-
 
 task unit: [:prepare_for_tests] do
   puts "Running unit tests".yellow
-  puts helper.unit_test_files.to_s.yellow
-  helper.run_tests
+  puts HELPER.unit_test_files.to_s.yellow
+  HELPER.run_tests
 end
 
 task unit_stage_2: [:prepare_for_tests] do
   puts "Running unit tests on arm-none-eabi-gcc".yellow
-  run_tests helper.unit_test_files
+  run_tests HELPER.unit_test_files
 end
 
-task :deploy, [:target] do |t, args|
-  if helper.usb_port == nil
+task :deploy do
+  if HELPER.usb_port == nil
     puts "no valid USB".red
     return
   end
 
-  case args[:target] 
+  case target 
   when 'teensy'
     :prepare_teensy_binary
-    puts "Deploying to #{helper.usb_port}".yellow
+    puts "Deploying to #{HELPER.usb_port}".yellow
     target = 'main'
-    helper.load_to_teensy(target)
-  when 'KL25Z'
-    :prepare_KL25Z_binary
+    HELPER.load_to_teensy(target)
+  when 'KL2Z'
+    :prepare_KL2Z_binary
     `cp build/dac_adc.srec /run/media/al/FRDM-KL25Z/`
   else
-    puts "`#{args[:target]}` is not a recognized target".yellow
+    puts "`#{target}` is not a recognized target".yellow
   end
 end
 
-task :prepare_KL25Z_binary do
-  `arm-none-eabi-objcopy -O srec #{helper.build_folder}dac_adc.elf #{helper.build_folder}dac_adc.srec`
+task :prepare_KL2Z_binary do
+  `arm-none-eabi-objcopy -O srec #{HELPER.build_folder}dac_adc.elf #{HELPER.build_folder}dac_adc.srec`
 end
 
-task prepare_teensy_binary: [:build_for_teensy, :build_main] do
+task prepare_teensy_binary: [:build_target, :build_main] do
   puts "Build successful, preparing to link".yellow
   target = 'main'
-  target_elf = helper.build_folder + target + '.elf '
-  helper.link_obj(source_objs_list, target_elf)
+  target_elf = HELPER.build_folder + target + '.elf '
+  HELPER.link_obj(source_objs_list, target_elf)
   puts 'fetching .elf size'.yellow
-  helper.get_elf_size
+  HELPER.get_elf_size
   puts 'copying .elf to hex'.yellow
-  helper.copy_hex(target_elf)   
+  HELPER.copy_hex(target_elf)   
 end
 
-task :build_for_teensy => target_objs_list do
-  puts "Building for teensy".yellow
-  puts "preparing teensy library".yellow
-  `ar rc build/libmyteensy.a #{helper.squash("",target_objs_list)}`
+task :build_target => target_objs_list do
+  puts "Building for #{target}".yellow
+  puts "preparing #{target} library".yellow
+  `ar rc build/libmy#{target}.a #{HELPER.squash("",target_objs_list)}`
 end
 
 task :build_main => source_objs_list do
   puts "Building main".yellow
 end
 
-target_sources_list.each do |source|
-  obj = helper.get_objfile(source)
-  file obj => source do
-puts "compiling: #{source}".yellow
-    exit if helper.compile_and_assemble(source).include?("ABORT")
+def map_sources_to_objs(list)
+  list.each do |source|
+    obj = HELPER.get_objfile(source)
+    file obj => source do
+  puts "compiling: #{source}".yellow
+      exit if HELPER.compile_and_assemble(source).include?("ABORT")
+    end
   end
 end
 
+map_sources_to_objs(target_sources_list)
 sources_list.each do |source|
-  obj = helper.get_objfile(source)
+  obj = HELPER.get_objfile(source)
   file obj => source do
 puts "compiling: #{source}".yellow
-    exit if helper.compile_and_assemble(source).include?("ABORT")
+    exit if HELPER.compile_and_assemble(source).include?("ABORT")
   end
 end

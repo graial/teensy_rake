@@ -35,7 +35,7 @@ class RakefileHelper
 			load_helper_config(args)
 		end
 
-		@CONFIG = YAML.load(File.read(@config_file))
+		@CONFIG = read_yaml(@config_file)
 		@SYSTEM = YAML.load(File.read(@system_file))
 		@source_folder = @CONFIG['compiler']['source_path']
 		@build_folder = @CONFIG['compiler']['build_path']
@@ -65,6 +65,14 @@ class RakefileHelper
 		@CPP_EXTENSION = '.cpp'.freeze
 	end
 	
+	def read_yaml(yaml_path)
+		begin
+			YAML.load(File.read(@config_file))
+		rescue Errno::ENOENT
+    		puts "no suitable yaml config `#{yaml_path}` was found".yellow
+		end
+	end
+
 	def load_helper_config(args)
 		if args[:config]
 			@config_file = args[:config]

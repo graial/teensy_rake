@@ -26,14 +26,14 @@ RSpec.describe "Rakefile" do
 	it 'fails to deploy onto a non-existant target', :teensy => true do
 		skip unless	 get_usb_port
 
-		expect(`rake deploy[turkey]`).to include('`turkey` is not a recognized target')
+		expect(`RAKE_TARGET=turkey rake deploy`).to include('no suitable yaml config `target_turkey.yml` was found')
 	end
 
 	it 'generates a teensy binary' do
 		teensylib = build_folder + 'libmyteensy.a'
 		delete_file_if_exists(teensylib)
 
-		`rake build_for_teensy`
+		`rake build_target`
 		
 		expect(check_for_file(teensylib)).to eq(true)
 	end
