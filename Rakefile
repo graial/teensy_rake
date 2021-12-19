@@ -53,21 +53,29 @@ task unit_stage_2: [:prepare_for_tests] do
   run_tests helper.unit_test_files
 end
 
-task :deploy, [:target, :prepare_teensy_hex] do |t, args|
+task :deploy, [:target] => [:prepare_binary] do |t, args|
   if helper.usb_port == nil
     puts "no valid USB".red
     return
   end
-  if args[:target] == 'teensy'
+
+  case args[:target] 
+  when 'teensy'
     puts "Deploying to #{helper.usb_port}".yellow
     target = 'main'
     helper.load_to_teensy(target)
+  when 'KL25Z'
+    `cp build/dac_adc.srec /run/media/al/FRDM-KL25Z/`
   else
     puts "`#{args[:target]}` is not a recognized target".yellow
   end
 end
 
-task prepare_teensy_hex: [:build_for_teensy] do
+task :prepare_KL25Z_binary do
+  `arm-none-eabi-objcopy -O srec #{helper.build_folder}dac_adc.elf #{helper.build_folder}dac_adc.srec`
+end
+
+task prepare_teensy_binary: [:build_for_teensy] do
   puts "Build successful, preparing to link".yellow
   target = 'main'
   target_elf = helper.build_folder + target + '.elf '
