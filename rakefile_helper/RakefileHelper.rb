@@ -100,7 +100,7 @@ puts shell_command
 	end
 
 	def gpp(instruction)
-		shell_command = @CONFIG['CPP'] + cpp_compiler_options + cc_compiler_options + instruction 
+		shell_command = @CONFIG['CPP'] + cpp_compiler_options + instruction 
 puts shell_command
 		output = `#{shell_command}`
 		check_exit_status('error during gpp compilation')
