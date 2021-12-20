@@ -61,10 +61,10 @@ task :deploy do
     return
   end
 
+  puts "Deploying #{target} to #{HELPER.usb_port}".yellow
   case target 
   when 'teensy'
     :prepare_teensy_binary
-    puts "Deploying to #{HELPER.usb_port}".yellow
     target = 'main'
     HELPER.load_to_teensy(target)
   when 'KL2Z'
