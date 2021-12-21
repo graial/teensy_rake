@@ -23,6 +23,7 @@ cc_compiler_options:
   - pedantic
 CPP: g++
 cpp_compiler_options: 
+  - m32
   - std=gnu++14
   - felide-constructors
   - fno-exceptions

@@ -9,11 +9,31 @@ RSpec.describe "Rakefile" do
 	let(:target_elf_filepath) { build_folder + 'main.elf' }
 	let(:target_hex_filepath) { build_folder + 'main.hex' }
 
-	it 'cleans the objs folder on rake clean' do
+	it 'cleans the objs and test runners on rake clean' do
 		create_file(objs_folder + 'example.o') unless check_for_filetype(objs_folder, 'o')
-
+		create_file(objs_folder + 'example.d') unless check_for_filetype(objs_folder, 'd')
+		create_file(objs_folder + 'example_Runner.c') unless check_for_filetype(objs_folder, 'c')
 		`rake clean`
-		expect(check_for_filetype(objs_folder, 'o')).to eq(false)
+
+		objs_filelist = Dir.glob(objs_folder)
+		expect(objs_filelist).not_to include('example.o')
+		expect(objs_filelist).not_to include('example.d')
+		expect(objs_filelist).not_to include('example_Runner.c')
+	end
+
+	it 'clobbers .elf .hex .a & .srec from the build_folder' do
+		create_file("#{build_folder}example.elf")
+		create_file("#{build_folder}example.hex")
+		create_file("#{build_folder}example.a")
+		create_file("#{build_folder}example.srec")
+
+		`rake clobber`
+
+		objs_filelist = Dir.glob(build_folder)
+		expect(objs_filelist).not_to include('example.elf')
+		expect(objs_filelist).not_to include('example.hex')
+		expect(objs_filelist).not_to include('example.a')
+		expect(objs_filelist).not_to include('example.srec')
 	end
 	
 	it 'defaults to unit tests' do

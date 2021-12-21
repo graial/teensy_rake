@@ -21,13 +21,6 @@ RSpec.describe RakefileHelper do
 			expect(helper.gpp(' --version')).to eq(`g++ --version`)
 		end
 
-		it "prepares folders for clean" do
-			expect(helper.configure_clean).to include(
-				"spec/spec_objs/app.exe", 
-				"spec/spec_objs/main.o", 
-				"spec/spec_objs/module.o"
-			)
-		end
 		it 'returns an ABORT message when a shell call fails' do
 			expect{ helper.gpp(' this-command-sucks')}.to raise_error("ABORT RakefileHelper error: error during gpp compilation")
 		end
@@ -67,6 +60,19 @@ RSpec.describe RakefileHelper do
 
 			expect(check_for_file(obj_filepath)).to eq(true)
 		end
+	end
+
+	it 'compiles and assembles a single ASM object' do
+		target = 'moduleASM'
+		
+		delete_file_if_exists("obj_folder#{target}.o")
+
+		source_filepath = add_src_wrappers(source_folder, target, 'S')
+		obj_filepath = add_objs_wrappers(obj_folder, target)
+
+		helper.compile_and_assemble(source_filepath)
+
+		expect(check_for_file(obj_filepath)).to eq(true)
 	end
 
 	describe "helper_configuration" do
@@ -125,11 +131,12 @@ RSpec.describe RakefileHelper do
 			let(:source2) { source_folder + 'module.c' }
 			let(:source3) { source_folder + 'sub_src/module_in_sub.c' }
 			let(:source4) { source_folder + 'mainPlus.cpp' }
+			let(:source5) { source_folder + 'moduleASM.S' }
 			let(:target) { target_folder + 'module_in_target.c' }
 			let(:source_array) { [source1, source2, source3, source4] }
 			let(:target_array) { [target] }
 			it 'knows its sources list' do
-				expect(helper.sources_list).to include(source1, source2, source3)
+				expect(helper.sources_list).to include(source1, source2, source3, source4, source5)
 				expect(helper.sources_list).not_to include(target)
 			end
 
@@ -158,9 +165,11 @@ RSpec.describe RakefileHelper do
 		end		
 		it 'return the target .o file for a given source' do
 			c_in_source = helper.source_folder + 'c_source_obj.c'
+			asm_in_source = helper.target_folder + 'asm_source_obj.S'			
 			cpp_in_target = helper.target_folder + 'cpp_target_obj.cpp'
 
 			expect(helper.get_objfile(c_in_source)).to eq(obj_folder + 'c_source_obj.o')
+			expect(helper.get_objfile(asm_in_source)).to eq(obj_folder + 'asm_source_obj.o')
 			expect(helper.get_objfile(cpp_in_target)).to eq(obj_folder + 'cpp_target_obj.o')
 		end
 

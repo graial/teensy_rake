@@ -118,9 +118,13 @@ puts shell_command
 	def compile_and_assemble(target)
 		source = Pathname.new(target)
 		object = get_objfile(source)
-
+puts object
 		case source.extname
 		when '.c'
+			string = "#{@defines} #{@includes} -c -o #{object} #{source}"
+# puts "cc: #{string}"
+			output = gcc(string)
+		when '.S'
 			string = "#{@defines} #{@includes} -c -o #{object} #{source}"
 # puts "cc: #{string}"
 			output = gcc(string)
@@ -221,6 +225,7 @@ puts shell_command
 	def sources_list
 		Rake::FileList.new(
 				source_folder + "**/*.c",
+				source_folder + "**/*.S",				
 				source_folder + "**/*.cpp"
 			) if source_folder
 	end
@@ -245,12 +250,24 @@ puts shell_command
 	def get_objfile(src_path)
 		base = File.basename(src_path)
 		objs_folder + base
+			.gsub('.S', '.o')			
 			.gsub('.cpp', '.o')
 			.gsub('.c', '.o')
 	end
 
 	def configure_clean
-		CLEAN.include(objs_folder + '*.*') unless objs_folder.nil?
+		CLEAN.include(
+		  "#{@objs_folder}*.o",
+		  "#{@objs_folder}*.d",
+		  "#{@objs_folder}*._runner.c"
+		) unless objs_folder.nil?
+		CLOBBER.include(
+		  "#{@build_folder}*.elf",
+		  "#{@build_folder}*.hex",
+		  "#{@build_folder}*.a",
+		  "#{@build_folder}*.srec"
+		) unless build_folder.nil?
+
 	end
 
 	def usb_port

@@ -173,6 +173,13 @@ RSpec.describe "helper_methods" do
 			expect(add_src_wrappers(src_dir, target)).to eq('src/on_point.c')
 			expect(add_objs_wrappers(objs_dir, target)).to eq('objs/on_point.o')
 		end
+		it "adds a path and '.S' extension to a file where ASM arg given" do
+			src_dir = 'src/'
+			objs_dir = 'objs/'
+			target = 'on_pointASM'
+			expect(add_src_wrappers(src_dir, target, "S")).to eq('src/on_pointASM.S')
+			expect(add_objs_wrappers(objs_dir, target)).to eq('objs/on_pointASM.o')
+		end
 		it "adds a path and '.cpp' extension to a file if 'cpp' arg given" do
 			src_dir = 'src/'
 			objs_dir = 'objs/'
