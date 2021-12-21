@@ -225,7 +225,6 @@ puts object
 	def sources_list
 		Rake::FileList.new(
 				source_folder + "**/*.c",
-				source_folder + "**/*.S",				
 				source_folder + "**/*.cpp"
 			) if source_folder
 	end
@@ -233,8 +232,9 @@ puts object
 	def target_sources_list
 		Rake::FileList.new(
 				@target_folder + "**/*.c",
+				@target_folder + "**/*.S",				
 				@target_folder + "**/*.cpp"
-			) if source_folder
+			) if @target_folder
 	end
 
 	def get_sourcefile(obj_path)

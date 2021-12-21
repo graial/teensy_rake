@@ -18,6 +18,7 @@ defines:
   items:
     - F_CPU=48000000 
     - USB_SERIAL 
+    - TEENSY
     - LAYOUT_US_ENGLISH 
     - __MK66FX1M0__ 
     - F_CPU=48000000 

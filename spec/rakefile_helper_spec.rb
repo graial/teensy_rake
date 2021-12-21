@@ -67,7 +67,7 @@ RSpec.describe RakefileHelper do
 		
 		delete_file_if_exists("obj_folder#{target}.o")
 
-		source_filepath = add_src_wrappers(source_folder, target, 'S')
+		source_filepath = add_src_wrappers(target_folder, target, 'S')
 		obj_filepath = add_objs_wrappers(obj_folder, target)
 
 		helper.compile_and_assemble(source_filepath)
@@ -131,17 +131,17 @@ RSpec.describe RakefileHelper do
 			let(:source2) { source_folder + 'module.c' }
 			let(:source3) { source_folder + 'sub_src/module_in_sub.c' }
 			let(:source4) { source_folder + 'mainPlus.cpp' }
-			let(:source5) { source_folder + 'moduleASM.S' }
-			let(:target) { target_folder + 'module_in_target.c' }
+			let(:target1) { target_folder + 'module_in_target.c' }
+			let(:target2) { target_folder + 'moduleASM.S' }
 			let(:source_array) { [source1, source2, source3, source4] }
 			let(:target_array) { [target] }
 			it 'knows its sources list' do
-				expect(helper.sources_list).to include(source1, source2, source3, source4, source5)
-				expect(helper.sources_list).not_to include(target)
+				expect(helper.sources_list).to include(source1, source2, source3, source4)
+				expect(helper.sources_list).not_to include(target1, target2)
 			end
 
 			it 'knows the source list of its target' do
-				expect(helper.target_sources_list).to include(target)
+				expect(helper.target_sources_list).to include(target1, target2)
 				expect(helper.target_sources_list).not_to include(source1, source2, source3)
 			end
 
