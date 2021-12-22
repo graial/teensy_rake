@@ -27,10 +27,11 @@ void LedController_TurnOn(int ledNumber)
 {
 	ledsImage |= getBitLocationFromLedNumber(ledNumber);
 	*ledsAddress = ledsImage;
+
 }
 
 void LedController_TurnOff(int ledNumber)
 {
-	*ledsAddress &= ~(getBitLocationFromLedNumber(ledNumber));
-	// *ledsAddress = ledsImage;
+	ledsImage &= ~(getBitLocationFromLedNumber(ledNumber));
+	*ledsAddress = ledsImage;
 }
