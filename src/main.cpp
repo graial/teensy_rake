@@ -2,8 +2,12 @@
 
 extern "C" int main(void)
 {
-uint16_t activeLeds;
-    pinMode(13, OUTPUT);
+	#include "LedController.h"
+
+	uint16_t activeLeds;
+    int boardLed = 13;
+    LedController_Activate(boardLed);
+    // pinMode(13, OUTPUT);
     
 	while (1) {
 		digitalWriteFast(13, HIGH);
