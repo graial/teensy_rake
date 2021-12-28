@@ -4,7 +4,7 @@ static int lastId;
 static int lastState;
 
 
-void LedControllerSpy_Create(uint16_t * ledsAddress)
+void LedControllerSpy_Create()
 {
   lastId = LED_ID_UNKNOWN;
   lastState = LED_STATE_UNKNOWN;

@@ -9,7 +9,7 @@ enum
   LED_ID_UNKNOWN = -1, LED_STATE_UNKNOWN = -1, 
   LED_OFF = 0, LED_ON = 1
 };
-void LedControllerSpy_Create(uint16_t * ledsAddress);
+void LedControllerSpy_Create();
 int LedControllerSpy_GetLastId(void);
 int LedControllerSpy_GetLastState(void);
 
