@@ -2,18 +2,22 @@
 
 extern "C" {
 	#include "LedController.h"
+	#include "TimeService.h"
+	#include "LedScheduler.h"
+
 	int main(void)
 	{
 		uint16_t activeLeds;
-	    int boardLed = 13;
 	    LedController_Create(&activeLeds);
+        LedScheduler_Create();
+	
+	    int boardLed = 13;
+	    int boardDelay = 500;
+	    LedScheduler_ScheduleDelay(boardLed, boardDelay);
 	    LedController_Activate(boardLed);
 	    
 		while (1) {
-			LedController_TurnOn(boardLed);
-			delay(500);
-			LedController_TurnOff(boardLed);
-			delay(500);
+			LedScheduler_WakeUp();
 		}
 	}
 }

@@ -57,3 +57,20 @@ void test_LedScheduler_ScheduledDelay_just_arrived_Led_is_on(void)
   TEST_ASSERT_EQUAL_HEX16(4, LedControllerSpy_GetLastId());
   TEST_ASSERT_EQUAL_HEX16(LED_OFF, LedControllerSpy_GetLastState());
 }
+
+void test_LedScheduler_Initializes_with_correct_alarm(void)
+{
+  TEST_ASSERT_EQUAL_PTR(
+    &LedScheduler_WakeUp, 
+    FakeTimeService_GetAlarmCallback()
+  );
+  TEST_ASSERT_EQUAL_HEX16(60, FakeTimeService_GetAlarmPeriod());
+}
+
+void test_LedScheduler_Destroy_cancels_alarm(void)
+{
+  LedScheduler_Destroy();
+  TEST_ASSERT_EQUAL_PTR(
+    NULL, 
+    FakeTimeService_GetAlarmCallback());
+}

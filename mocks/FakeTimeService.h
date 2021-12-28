@@ -3,8 +3,11 @@
 
 #include "TimeService.h"
 
+enum {MILLISECONDS_UNKNOWN = -1 };
+
 void FakeTimeService_SetMilliseconds(int);
 
-enum {MILLISECONDS_UNKNOWN = -1 };
+WakeUpCallback FakeTimeService_GetAlarmCallback(void);
+int FakeTimeService_GetAlarmPeriod(void);
 
 #endif
