@@ -31,3 +31,13 @@ void LedController_TurnOff(int ledNumber)
   lastId = ledNumber;
   lastState = LED_OFF;
 }
+
+BOOL LedController_IsOn(int ledNumber)
+{
+  if (lastId == ledNumber & lastState == LED_ON)
+  {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
