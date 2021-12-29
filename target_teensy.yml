@@ -27,7 +27,7 @@ defines:
     - TEENSYDUINO=144
 MCU: 'MK66FX1M0'
 cc_compiler_options: 
-  - Wall
+  - Werror
   - g
   - Os
   - mcpu=cortex-m4
@@ -35,6 +35,7 @@ cc_compiler_options:
   - MMD
 cpp_compiler_options: 
   - std=gnu++14 
+  - Werror
   - mcpu=cortex-m4
   - mthumb
   - MMD
