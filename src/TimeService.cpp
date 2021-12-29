@@ -6,7 +6,7 @@ static WakeUpCallback callback = NULL;
 
 static void _cpp_delay(int milliseconds)
 {
-	// delay(milliseconds);
+	delay(milliseconds);
 }
 
 extern "C" {
