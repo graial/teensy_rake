@@ -3,21 +3,27 @@
 
 #include "common.h"
 
-typedef struct Time Time;
-typedef void (*WakeUpCallback)(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-struct Time
-{
-    int milliseconds;
-};
+    typedef struct Time Time;
+    typedef void (*WakeUpCallback)(void);
 
-void TimeService_GetTime(Time * );
+    struct Time
+    {
+        int milliseconds;
+    };
 
-void TimeService_Create(void);
-void TimeService_Destroy(void);
-void TimeService_Delay(int milliseconds);
+    void TimeService_GetTime(Time * );
+    void TimeService_Create(void);
+    void TimeService_Destroy(void);
+    void TimeService_Delay(int milliseconds);
+    void TimeService_SetPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb);
+    void TimeService_CancelPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb);
 
-void  TimeService_SetPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb);
-void TimeService_CancelPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb);
+#ifdef __cplusplus
+}
+#endif
 
 #endif
