@@ -321,7 +321,7 @@ puts reboot_command
 	def run_tests
 puts "Running system tests..."
 
-		unit_test_files.each do |test_file|
+		unit_test_files.shuffle.each do |test_file|
 # puts "test_file: " + test_file
 			compile_and_assemble(test_file)
 			runner_name = generate_runner_name(test_file)
@@ -409,7 +409,9 @@ puts exe
 	    executable = build_folder + File.basename(target).sub('.c', @CONFIG['exe_filetype'])
 
 		link_obj(objs, executable)
-		report(`#{executable}`)
+		result = `#{executable}`
+		raise "#{target} encountered a Segmentation Fault SIGSEGV".red if $?.to_s.match(/SIGSEGV/)		
+		report(result)
 	end
 
 end

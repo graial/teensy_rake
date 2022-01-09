@@ -84,7 +84,6 @@ task :build_main => source_objs_list do
   puts "Building main".yellow
 end
 
-
 target_sources_list.each do |source|
   obj = helper.get_objfile(source)
   file obj => source do

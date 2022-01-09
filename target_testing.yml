@@ -16,6 +16,7 @@ compiler:
 CC: gcc
 cc_compiler_options:
   - Werror
+  - ggdb
   - c
   - m32
   - Wno-address
@@ -24,6 +25,7 @@ cc_compiler_options:
 CPP: g++
 cpp_compiler_options: 
   - m32
+  - ggdb
   - Werror
   - std=gnu++14
   - felide-constructors
