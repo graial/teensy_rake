@@ -265,7 +265,8 @@ puts object
 		  "#{@build_folder}*.elf",
 		  "#{@build_folder}*.hex",
 		  "#{@build_folder}*.a",
-		  "#{@build_folder}*.srec"
+		  "#{@build_folder}*.srec",
+		  "#{@build_folder}*.exe"
 		) unless build_folder.nil?
 
 	end

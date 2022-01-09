@@ -26,6 +26,7 @@ RSpec.describe "Rakefile" do
 		create_file("#{build_folder}example.hex")
 		create_file("#{build_folder}example.a")
 		create_file("#{build_folder}example.srec")
+		create_file("#{build_folder}example.exe")
 
 		`rake clobber`
 
@@ -34,6 +35,7 @@ RSpec.describe "Rakefile" do
 		expect(objs_filelist).not_to include('example.hex')
 		expect(objs_filelist).not_to include('example.a')
 		expect(objs_filelist).not_to include('example.srec')
+		expect(objs_filelist).not_to include('example.exe')
 	end
 	
 	it 'defaults to unit tests' do
