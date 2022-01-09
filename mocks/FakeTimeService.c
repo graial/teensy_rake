@@ -1,7 +1,6 @@
 #include "FakeTimeService.h"
 
 static Time fakeTime;
-static WakeUpCallback callback;
 static int period;
 
 void TimeService_Create(void)
@@ -27,24 +26,12 @@ void TimeService_Delay(int milliseconds)
 {
 }
 
-WakeUpCallback FakeTimeService_GetAlarmCallback(void)
+void TimeService_Reset(void)
 {
-    return callback;
+    fakeTime.milliseconds = 0;
 }
 
 int FakeTimeService_GetAlarmPeriod(void)
 {
     return period;
-}
-
-void TimeService_SetPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb)
-{
-    callback = cb;
-    period = milliseconds;
-}
-
-void TimeService_CancelPeriodicAlarmInMilliseconds(int milliseconds, WakeUpCallback cb)
-{
-    callback = NULL;
-    period = 0;
 }

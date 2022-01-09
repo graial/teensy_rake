@@ -1,11 +1,15 @@
 #ifndef D_Arduino_H
 #define D_Arduino_H
 
+#include <stdint.h>
+
 enum
 {
   HIGH = 1, LOW = 0,
   OUTPUT = 10
 };
+
+typedef unsigned long elapsedMillis;
 
 void pinMode(int ledNumber, int command);
 void digitalWriteFast(int ledNumber, int LEVEL);
