@@ -1,6 +1,6 @@
 # teensy_rake
 
-Teensy rake is a rake-based build system which is intended to accomplish multi-targeting of embedded devices.
+Teensy rake is a rake-based build system which is intended to accomplish multi-targeting of embedded devices. It was built for learners wishing to follow [this tutorial on using TDD for embedded development](http://127.0.0.1:4000/open-source/embedded/teensy/a-test-drive-build-system-for-teensy/)
 
 The Rakefile was built via TDD and it employs an embedded-TDD process according to the frameworks laid out by:
   - James Grenning's [TDD for Embedded Systems](https://pragprog.com/titles/jgade/test-driven-development-for-embedded-c/)
