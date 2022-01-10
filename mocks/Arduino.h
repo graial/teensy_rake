@@ -9,4 +9,6 @@ enum
 void digitalWriteFast(int ledNumber, int LEVEL);
 void pinMode(int ledNumber, int OUTPUT);
 
+typedef unsigned long elapsedMillis;
+
 #endif

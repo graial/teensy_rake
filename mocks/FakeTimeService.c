@@ -20,3 +20,11 @@ void FakeTimeService_SetMilliseconds(int milliseconds)
 {
   fakeTime.milliseconds = milliseconds;
 }
+
+void TimeService_Delay(int milliseconds)
+{
+}
+
+void TimeService_Reset()
+{
+}

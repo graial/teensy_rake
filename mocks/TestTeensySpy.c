@@ -49,3 +49,21 @@ void test_TeensySpy_set_a_pin_to_LOW(void)
   TEST_ASSERT_EQUAL_HEX16(8, TeensySpy_GetLastId());
   TEST_ASSERT_EQUAL_HEX16(LOW, TeensySpy_GetLastState());
 }
+
+void test_TeensySpy_stubs_0_elapsedMillis_on_init(void)
+{
+  TEST_ASSERT_EQUAL_HEX16(0, TeensySpy_GetElapsedMillis());
+}
+
+void test_TeensySpy_stubs_can_advance_elapsedMillis(void)
+{
+  TeensySpy_AdvanceElapsedMillis(50);
+  TEST_ASSERT_EQUAL_HEX16(50, TeensySpy_GetElapsedMillis());
+}
+
+void test_TeensySpy_stubs_can_reset_elapsedMillis(void)
+{
+  TeensySpy_AdvanceElapsedMillis(50);
+  TeensySpy_ResetElapsedMillis();
+  TEST_ASSERT_EQUAL_HEX16(0, TeensySpy_GetElapsedMillis());
+}

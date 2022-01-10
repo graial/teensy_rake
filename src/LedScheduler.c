@@ -46,4 +46,7 @@ void LedScheduler_WakeUp(void)
 	} else {
 		LedController_TurnOn(scheduledEvent.id);
 	}
+	
+	TimeService_Reset();
+
 }

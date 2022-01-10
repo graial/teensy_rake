@@ -1,8 +1,10 @@
-
 #ifndef D_TeensySpy_H
 #define D_TeensySpy_H
 
 #include <stdint.h>
+#include "Arduino.h"
+
+elapsedMillis timeCounter;
 
 enum
 {
@@ -16,5 +18,9 @@ int TeensySpy_GetLastId(void);
 int TeensySpy_GetLastState(void);
 
 void pinMode(int ledNumber, int command);
+
+elapsedMillis TeensySpy_GetElapsedMillis(void);
+elapsedMillis TeensySpy_AdvanceElapsedMillis(int milliseconds);
+void TeensySpy_ResetElapsedMillis(void);
 
 #endif

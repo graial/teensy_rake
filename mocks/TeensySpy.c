@@ -8,6 +8,7 @@ void TeensySpy_Create()
 {
   lastId = LED_ID_UNKNOWN;
   lastState = LED_STATE_UNKNOWN;
+  timeCounter = 0;
 }
 
 int TeensySpy_GetLastId()
@@ -35,4 +36,19 @@ void digitalWriteFast(int ledNumber, int LEVEL)
     lastId = LED_ID_UNKNOWN;
     lastState = LED_STATE_UNKNOWN;
   }
+}
+
+elapsedMillis TeensySpy_GetElapsedMillis(void)
+{
+  return timeCounter;
+}
+
+elapsedMillis TeensySpy_AdvanceElapsedMillis(int milliseconds)
+{
+  timeCounter += milliseconds;
+}
+
+void TeensySpy_ResetElapsedMillis(void)
+{
+  timeCounter = 0;
 }

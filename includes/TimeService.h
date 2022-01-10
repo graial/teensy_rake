@@ -1,16 +1,25 @@
 #ifndef D_TimeService_H
 #define D_TimeService_H
 
-typedef struct Time Time;
+#ifdef __cplusplus
+extern "C" {
+#endif 
 
-struct Time
-{
-    int milliseconds;
-};
+    typedef struct Time Time;
 
-void TimeService_GetTime(Time * );
+    struct Time
+    {
+        int milliseconds;
+    };
 
-void TimeService_Create(void);
-void TimeService_Destroy(void);
+    void TimeService_Delay(int milliseconds);
+    void TimeService_GetTime(Time * );
+    void TimeService_Create(void);
+    void TimeService_Destroy(void);
+    void TimeService_Reset();
+
+#ifdef __cplusplus
+}
+#endif 
 
 #endif 
