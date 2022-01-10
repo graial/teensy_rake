@@ -23,12 +23,15 @@ static uint16_t getBitLocationFromLedNumber(int ledNumber)
 
 void LedController_TurnOn(int ledNumber)
 {
-	ledsImage |= getBitLocationFromLedNumber(ledNumber);
-	*ledsAddress = ledsImage;
+  ledsImage |= getBitLocationFromLedNumber(ledNumber);
+  *ledsAddress = ledsImage;
+  // digitalWriteFast(ledNumber, HIGH);
 }
 
 void LedController_TurnOff(int ledNumber)
 {
-	ledsImage &= ~(getBitLocationFromLedNumber(ledNumber));
-	*ledsAddress = ledsImage;
+  ledsImage &= ~(getBitLocationFromLedNumber(ledNumber));
+  *ledsAddress = ledsImage;
+  // digitalWriteFast(ledNumber, LOW);
 }
+  

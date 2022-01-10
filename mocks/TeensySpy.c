@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "TeensySpy.h"
 
 static int lastId;
@@ -22,4 +23,16 @@ void pinMode(int ledNumber, int command)
 {
   lastId = ledNumber;
   lastState = command;
+}
+
+void digitalWriteFast(int ledNumber, int LEVEL)
+{
+  if (lastId == ledNumber)
+  {
+    lastState = LEVEL;
+  } else
+  {
+    lastId = LED_ID_UNKNOWN;
+    lastState = LED_STATE_UNKNOWN;
+  }
 }

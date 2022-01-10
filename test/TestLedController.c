@@ -2,6 +2,7 @@
 #include "LedController.h"
 #include "TeensySpy.h"
 #include <stdint.h>
+#include "Arduino.h"
 
 static uint16_t virtualPin;
 

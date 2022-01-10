@@ -10,9 +10,9 @@ extern "C" {
         LedController_Activate(boardLed);
         // pinMode(13, OUTPUT);
         while (1) {
-            digitalWriteFast(13, HIGH);
+            LedController_TurnOn(boardLed);
             delay(500);
-            digitalWriteFast(13, LOW);
+            LedController_TurnOff(boardLed);            
             delay(500);
         }
     }

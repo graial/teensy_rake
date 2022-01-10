@@ -3,9 +3,10 @@
 
 enum
 {
-  OUTPUT = 10
+  LOW = 0, HIGH = 1, OUTPUT = 10
 };
 
+void digitalWriteFast(int ledNumber, int LEVEL);
 void pinMode(int ledNumber, int OUTPUT);
 
 #endif
