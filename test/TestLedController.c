@@ -63,3 +63,10 @@ void test_Unactivated_Led_will_return_LED_if_activated(void)
   TEST_ASSERT_EQUAL_HEX16(10, TeensySpy_GetLastId());
   TEST_ASSERT_EQUAL_HEX16(OUTPUT, TeensySpy_GetLastState());
 }
+
+void test_LedController_knows_if_an_Led_is_On(void)
+{
+  LedController_TurnOn(8);
+  TEST_ASSERT(LedController_IsOn(8));
+  TEST_ASSERT_FALSE(LedController_IsOn(10));
+}

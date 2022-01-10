@@ -34,4 +34,13 @@ void LedController_TurnOff(int ledNumber)
   *ledsAddress = ledsImage;
   digitalWriteFast(ledNumber, LOW);
 }
-  
+
+BOOL LedController_IsOn(int ledNumber)
+{
+  if ((*ledsAddress & getBitLocationFromLedNumber(ledNumber)) >> (ledNumber -1))
+  {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}  
