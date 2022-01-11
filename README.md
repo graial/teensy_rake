@@ -1,6 +1,6 @@
 # teensy_rake
 
-Teensy rake is a rake-based build system which is intended to accomplish multi-targeting of embedded devices. It was built for learners wishing to follow [this tutorial on using TDD for embedded development](http://127.0.0.1:4000/open-source/embedded/teensy/a-test-drive-build-system-for-teensy/)
+Teensy rake is a rake-based build system which is intended to accomplish multi-targeting of embedded devices. It was built for learners wishing to follow [this tutorial on using TDD for embedded development](http://sunetrike.com/open-source/embedded/teensy/a-test-drive-build-system-for-teensy/)
 
 The Rakefile was built via TDD and it employs an embedded-TDD process according to the frameworks laid out by:
   - James Grenning's [TDD for Embedded Systems](https://pragprog.com/titles/jgade/test-driven-development-for-embedded-c/)
@@ -11,7 +11,7 @@ It has been built for instructional purposes with two primary goals:
  1. to give Arduino developers an introduction into the world of Embedded TDD
  2. to achieve a multi-targetting buildchain that allows a developer to build an embedded TDD-application that can be ported to multiple devices from multiple vendors
 
- The first goal is executed on via this blog post. So if you are an Arduino developer interested in levelling up your C-programming skills, you can start with this blog post *to be posted soon!*
+ The first goal is executed on via this blog post. So if you are an Arduino developer interested in levelling up your C-programming skills, you can start with this [blog post](http://sunetrike.com/open-source/embedded/teensy/a-test-drive-build-system-for-teensy/)*
 
  The second goal is admittedly more ambitious and may very well be a bigger challenge than my time and programming skills can deliver on.
 
