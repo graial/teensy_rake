@@ -36,7 +36,7 @@ class RakefileHelper
 		end
 
 		@CONFIG = read_yaml(@config_file)
-		@SYSTEM = YAML.load(File.read(@system_file))
+		@SYSTEM = read_yaml(@system_file)
 		@source_folder = @CONFIG['compiler']['source_path']
 		@build_folder = @CONFIG['compiler']['build_path']
 		@unit_tests_folder = @CONFIG['compiler']['unit_tests_path']
@@ -67,7 +67,7 @@ class RakefileHelper
 	
 	def read_yaml(yaml_path)
 		begin
-			YAML.load(File.read(@config_file))
+			YAML.load(File.read(@config_file), aliases: true)
 		rescue Errno::ENOENT
     		puts "no suitable yaml config `#{yaml_path}` was found".yellow
 		end
